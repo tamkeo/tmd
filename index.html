@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Tra Cứu & Quản Lý Kho Sản Phẩm | Chung Thanh Phong</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- TOP APP BAR -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand-section">
+        <div class="brand-badge">CHUNG THANH PHONG</div>
+        <h1 class="brand-title">HỆ THỐNG KHO & TRA CỨU</h1>
+      </div>
+      <div class="top-bar-actions">
+        <button id="btn-theme-toggle" class="icon-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">
+          <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <button id="btn-quick-search" class="icon-btn" title="Tìm kiếm nhanh" aria-label="Tìm kiếm">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button id="btn-top-picklist" class="icon-btn has-badge" title="Danh sách đã chọn" aria-label="Danh sách chọn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span class="badge-count picklist-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="app-main">
+    
+    <!-- VIEW 1: DASHBOARD / TỔNG QUAN -->
+    <section id="view-dashboard" class="app-view active">
+      <div class="view-header">
+        <div class="view-title-wrap">
+          <span class="view-subtitle">Executive Overview</span>
+          <h2 class="view-title">Tổng Quan 3 Kho Hàng</h2>
+        </div>
+        <div class="date-badge" id="current-date">Hôm nay</div>
+      </div>
+
+      <!-- SEARCH INPUT HERO -->
+      <div class="dashboard-search-card" onclick="switchTab('search')">
+        <div class="search-input-mock">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <span>Nhập mã sản phẩm, barcode, tên đầm...</span>
+        </div>
+        <button class="search-action-btn">Tra cứu</button>
+      </div>
+
+      <!-- KEY METRICS STATS -->
+      <div class="stats-grid">
+        <div class="stat-card gold-gradient">
+          <div class="stat-icon-wrap">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Tổng Sản Phẩm</span>
+            <span class="stat-val" id="kpi-total-products">1,170</span>
+            <span class="stat-sub" id="kpi-in-stock">1.010 mã có sẵn</span>
+          </div>
+        </div>
+
+        <div class="stat-card rose-gradient">
+          <div class="stat-icon-wrap">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Tổng Giá Trị Kho</span>
+            <span class="stat-val" id="kpi-total-val">~32.9 Tỷ</span>
+            <span class="stat-sub">Định giá niêm yết</span>
+          </div>
+        </div>
+
+        <div class="stat-card dark-card">
+          <div class="stat-icon-wrap">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Bộ Sưu Tập / Sheet</span>
+            <span class="stat-val" id="kpi-collections">39</span>
+            <span class="stat-sub">Trên 3 File Kho</span>
+          </div>
+        </div>
+
+        <div class="stat-card dark-card">
+          <div class="stat-icon-wrap">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <div class="stat-info">
+            <span class="stat-label">Tổng Số Lượng Tồn</span>
+            <span class="stat-val" id="kpi-total-stock">1,594</span>
+            <span class="stat-sub">Sản phẩm thực tế</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- WAREHOUSE SUMMARY (3 FILES) -->
+      <div class="section-title-wrap">
+        <h3 class="section-title">Phân Bổ Theo 3 File Kho</h3>
+        <span class="section-badge">3 Nguồn Dữ Liệu</span>
+      </div>
+      <div class="warehouse-grid" id="warehouse-cards-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- EXCEL OVERVIEW TABLES SHORTCUT -->
+      <div class="section-title-wrap">
+        <h3 class="section-title">Bảng Tổng Hợp Excel Gốc</h3>
+        <span class="section-badge">Sheet Báo Cáo</span>
+      </div>
+      <div class="overview-chips-scroll" id="overview-sheets-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- POPULAR COLLECTIONS PREVIEW -->
+      <div class="section-title-wrap">
+        <h3 class="section-title">Bộ Sưu Tập Tiêu Biểu</h3>
+        <button class="view-all-link" onclick="switchTab('collections')">Xem tất cả (39) &rarr;</button>
+      </div>
+      <div class="collection-scroll-cards" id="featured-collections-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- RECENTLY VIEWED / FEATURED PRODUCTS -->
+      <div class="section-title-wrap">
+        <h3 class="section-title">Sản Phẩm Mới & Nổi Bật</h3>
+        <button class="view-all-link" onclick="switchTab('inventory')">Xem kho hàng &rarr;</button>
+      </div>
+      <div class="product-cards-grid" id="dashboard-featured-products">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 2: COLLECTIONS / BỘ SƯU TẬP -->
+    <section id="view-collections" class="app-view">
+      <div class="view-header">
+        <div class="view-title-wrap">
+          <span class="view-subtitle">Danh mục & Sheets</span>
+          <h2 class="view-title">Tất Cả Bộ Sưu Tập</h2>
+        </div>
+      </div>
+
+      <!-- FILTER TABS FOR FILES -->
+      <div class="filter-pill-bar" id="collections-file-filter">
+        <button class="filter-pill active" data-file="all">Tất cả (39)</button>
+        <button class="filter-pill" data-file="kho_bridal">Kho Bridal 2026</button>
+        <button class="filter-pill" data-file="kho_rin">Kho Trưng Bày Rin</button>
+        <button class="filter-pill" data-file="kho_moi">Kho Mới 30.06.25</button>
+      </div>
+
+      <!-- CATEGORY CHIPS -->
+      <div class="category-chip-scroll" id="collections-cat-filter">
+        <!-- Dynamic chips -->
+      </div>
+
+      <!-- COLLECTIONS GRID -->
+      <div class="collections-masonry" id="collections-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- VIEW 3: SEARCH & FILTER / TRA CỨU -->
+    <section id="view-search" class="app-view">
+      <div class="search-sticky-header">
+        <div class="search-bar-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="search-input" class="search-input" placeholder="Tìm Mã hàng, Barcode, Tên sản phẩm, BST..." autocomplete="off">
+          <button id="btn-clear-search" class="clear-icon" style="display: none;">&times;</button>
+        </div>
+
+        <!-- QUICK FILTER PILLS -->
+        <div class="quick-filter-row">
+          <button class="quick-filter-btn active" data-filter="all">Tất cả</button>
+          <button class="quick-filter-btn" data-filter="in_stock">Còn hàng</button>
+          <button class="quick-filter-btn" data-filter="has_img">Có hình</button>
+          <button class="quick-filter-btn" data-filter="bridal">Bridal</button>
+          <button class="quick-filter-btn" data-filter="rtw">RTW</button>
+          <button class="quick-filter-btn" data-filter="aodai">Áo Dài</button>
+          <button class="quick-filter-btn" id="btn-toggle-filter-modal">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+            Bộ lọc nâng cao
+          </button>
+        </div>
+
+        <div class="search-meta-bar">
+          <span id="search-result-count">Đang hiển thị 1.170 sản phẩm</span>
+          <div class="sort-select-wrap">
+            <select id="sort-select" class="sort-select">
+              <option value="default">Mặc định</option>
+              <option value="price-asc">Giá tăng dần</option>
+              <option value="price-desc">Giá giảm dần</option>
+              <option value="stock-desc">Tồn kho nhiều nhất</option>
+              <option value="name-asc">Tên A-Z</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEARCH RESULTS CONTAINER -->
+      <div class="product-cards-grid" id="search-results-grid">
+        <!-- Rendered dynamically -->
+      </div>
+      <div id="search-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">🔍</div>
+        <h3>Không tìm thấy sản phẩm nào</h3>
+        <p>Thử tìm với từ khóa khác như mã "RTW", "BS", "Áo dài", "Vest"...</p>
+        <button class="btn-primary" onclick="resetSearchFilters()">Xóa bộ lọc</button>
+      </div>
+
+      <div class="pagination-wrapper" id="search-pagination" style="display: none;">
+        <button id="btn-load-more" class="btn-load-more">Tải thêm sản phẩm</button>
+      </div>
+    </section>
+
+    <!-- VIEW 4: INVENTORY / QUẢN LÝ KHO -->
+    <section id="view-inventory" class="app-view">
+      <div class="view-header">
+        <div class="view-title-wrap">
+          <span class="view-subtitle">Stock & Matrix</span>
+          <h2 class="view-title">Quản Lý Tồn Kho</h2>
+        </div>
+        <div class="view-switch-tabs">
+          <button class="view-switch-btn active" id="btn-view-grid" title="Xem dạng lưới ảnh">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Lưới
+          </button>
+          <button class="view-switch-btn" id="btn-view-table" title="Xem dạng bảng chi tiết">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            Bảng
+          </button>
+        </div>
+      </div>
+
+      <!-- INVENTORY FILTER BAR -->
+      <div class="inventory-controls">
+        <select id="inv-file-select" class="inv-filter-select">
+          <option value="all">Tất cả File Kho</option>
+          <option value="kho_bridal">Kho Bridal 2026</option>
+          <option value="kho_rin">Kho Trưng Bày Rin 2026</option>
+          <option value="kho_moi">Kho Mới (30.06.2025)</option>
+        </select>
+        <select id="inv-collection-select" class="inv-filter-select">
+          <option value="all">Tất cả Bộ Sưu Tập (39)</option>
+          <!-- dynamic collections -->
+        </select>
+      </div>
+
+      <!-- INVENTORY CONTENT (GRID OR TABLE) -->
+      <div id="inventory-grid-container" class="product-cards-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div id="inventory-table-container" class="inventory-table-wrapper" style="display: none;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Ảnh</th>
+              <th>Mã Hàng / SKU</th>
+              <th>Tên Sản Phẩm</th>
+              <th>Bộ Sưu Tập</th>
+              <th>Đơn Giá</th>
+              <th>Size & Tồn</th>
+              <th style="text-align: center;">Tồn</th>
+              <th style="text-align: center;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-table-body">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination-wrapper" id="inventory-pagination">
+        <button id="btn-inv-load-more" class="btn-load-more">Tải thêm sản phẩm</button>
+      </div>
+    </section>
+
+    <!-- VIEW 5: PICKLIST / CHỌN ĐỒ / SOẠN KHO -->
+    <section id="view-picklist" class="app-view">
+      <div class="view-header">
+        <div class="view-title-wrap">
+          <span class="view-subtitle">Fitting & Borrow List</span>
+          <h2 class="view-title">Danh Sách Soạn Kho / Thử Đồ</h2>
+        </div>
+        <button id="btn-clear-picklist" class="btn-text-danger">Xóa tất cả</button>
+      </div>
+
+      <!-- PICKLIST SUMMARY BANNER -->
+      <div class="picklist-summary-card">
+        <div class="picklist-summary-item">
+          <span class="summary-label">Mẫu đã chọn</span>
+          <span class="summary-val" id="pick-count">0 mẫu</span>
+        </div>
+        <div class="picklist-summary-item">
+          <span class="summary-label">Tổng số lượng</span>
+          <span class="summary-val" id="pick-stock">0 cái</span>
+        </div>
+        <div class="picklist-summary-item">
+          <span class="summary-label">Tổng giá trị</span>
+          <span class="summary-val highlight" id="pick-val">0 ₫</span>
+        </div>
+      </div>
+
+      <!-- PICKLIST ACTION BUTTONS -->
+      <div class="picklist-actions-row">
+        <button id="btn-copy-picklist" class="btn-action gold">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Sao chép danh sách (Zalo)
+        </button>
+        <button id="btn-print-picklist" class="btn-action dark">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          In phiếu soạn đồ
+        </button>
+      </div>
+
+      <!-- PICKLIST ITEMS CONTAINER -->
+      <div class="picklist-items-list" id="picklist-container">
+        <!-- Rendered dynamically -->
+      </div>
+      <div id="picklist-empty-state" class="empty-state">
+        <div class="empty-icon">👗</div>
+        <h3>Chưa có sản phẩm nào được chọn</h3>
+        <p>Bấm vào biểu tượng ngôi sao ⭐ trên thẻ sản phẩm để thêm vào danh sách soạn đồ, chụp hình hoặc kiểm kho.</p>
+        <button class="btn-primary" onclick="switchTab('search')">Tìm sản phẩm ngay</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR (FIXED FOR MOBILE) -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-target="dashboard">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">Tổng Quan</span>
+    </button>
+    <button class="nav-item" data-target="collections">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      </div>
+      <span class="nav-label">Bộ Sưu Tập</span>
+    </button>
+    <button class="nav-item" data-target="search">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <span class="nav-label">Tra Cứu</span>
+    </button>
+    <button class="nav-item" data-target="inventory">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      </div>
+      <span class="nav-label">Kho Hàng</span>
+    </button>
+    <button class="nav-item" data-target="picklist">
+      <div class="nav-icon has-badge">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span class="badge-count picklist-badge">0</span>
+      </div>
+      <span class="nav-label">Chọn Đồ</span>
+    </button>
+  </nav>
+
+  <!-- ADVANCED FILTER MODAL -->
+  <div id="filter-modal" class="modal-backdrop">
+    <div class="filter-bottom-sheet">
+      <div class="modal-drag-bar"></div>
+      <div class="modal-header">
+        <h3>Bộ Lọc Sản Phẩm</h3>
+        <button class="btn-close-modal" id="btn-close-filter">&times;</button>
+      </div>
+      <div class="modal-body filter-body">
+        <div class="filter-group">
+          <label class="filter-group-title">Nguồn File Kho</label>
+          <div class="pill-group" id="modal-filter-file">
+            <button class="pill-select active" data-val="all">Tất cả kho</button>
+            <button class="pill-select" data-val="kho_bridal">Kho Bridal 2026</button>
+            <button class="pill-select" data-val="kho_rin">Kho Trưng Bày Rin</button>
+            <button class="pill-select" data-val="kho_moi">Kho Mới 30.06.25</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label class="filter-group-title" style="margin-bottom:0;">Bộ Sưu Tập</label>
+            <span id="modal-col-count" style="font-size:0.7rem; color:var(--gold-primary); font-weight:600;">Tất cả (39 BST)</span>
+          </div>
+          <div style="margin-bottom:8px;">
+            <input type="text" id="modal-col-search-input" class="modal-search-box" placeholder="🔍 Tìm nhanh tên bộ sưu tập..." autocomplete="off">
+          </div>
+          <div class="pill-group pill-group-scrollable" id="modal-filter-collection">
+            <button class="pill-select active" data-val="all">Tất cả BST (39)</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-group-title">Tình Trạng Tồn Kho</label>
+          <div class="pill-group" id="modal-filter-stock">
+            <button class="pill-select active" data-val="all">Tất cả</button>
+            <button class="pill-select" data-val="in_stock">Còn hàng (>0)</button>
+            <button class="pill-select" data-val="out_of_stock">Hết hàng (=0)</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-group-title">Kích Cỡ (Size)</label>
+          <div class="pill-group" id="modal-filter-size">
+            <button class="pill-select active" data-val="all">Tất cả size</button>
+            <button class="pill-select" data-val="XS">XS</button>
+            <button class="pill-select" data-val="S">S</button>
+            <button class="pill-select" data-val="M">M</button>
+            <button class="pill-select" data-val="L">L</button>
+            <button class="pill-select" data-val="XL">XL</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-group-title">Khoảng Giá</label>
+          <div class="pill-group" id="modal-filter-price">
+            <button class="pill-select active" data-val="all">Tất cả mức giá</button>
+            <button class="pill-select" data-val="under_2m">Dưới 2 triệu</button>
+            <button class="pill-select" data-val="2m_10m">2 - 10 triệu</button>
+            <button class="pill-select" data-val="10m_50m">10 - 50 triệu</button>
+            <button class="pill-select" data-val="above_50m">Trên 50 triệu</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-secondary" id="btn-reset-modal-filter">Đặt lại</button>
+        <button class="btn-modal-primary" id="btn-apply-modal-filter">Áp Dụng Bộ Lọc</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT DETAIL MODAL (SLIDE UP BOTTOM SHEET) -->
+  <div id="product-modal" class="modal-backdrop">
+    <div class="product-bottom-sheet">
+      <div class="modal-drag-bar"></div>
+      <button class="btn-close-modal" id="btn-close-product-modal">&times;</button>
+      
+      <div class="product-modal-content" id="product-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- EXCEL OVERVIEW TABLE VIEWER MODAL -->
+  <div id="overview-modal" class="modal-backdrop">
+    <div class="overview-modal-box">
+      <div class="modal-header">
+        <h3 id="overview-modal-title">Báo Cáo Tổng Hợp</h3>
+        <button class="btn-close-modal" id="btn-close-overview-modal">&times;</button>
+      </div>
+      <div class="overview-table-scroll" id="overview-modal-body">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX FOR IMAGE ZOOM -->
+  <div id="lightbox-modal" class="lightbox-overlay" onclick="closeLightbox()">
+    <button class="lightbox-close">&times;</button>
+    <img id="lightbox-img" src="" alt="Enlarged view">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">Đã sao chép vào bộ nhớ tạm!</div>
+
+  <!-- LOAD DATA SCRIPT & APPLICATION SCRIPT -->
+  <script src="data/bundle_data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

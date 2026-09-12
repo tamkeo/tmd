@@ -1,0 +1,579 @@
+[
+  {
+    "file_id": "kho_moi",
+    "file_name": "Kho Mới (30.06.2025)",
+    "collection": "RTW25",
+    "category": "Ready To Wear (RTW)",
+    "slug": "kho_moi_rtw25",
+    "product_count": 93,
+    "cover_image": "images/kho_moi/rtw25_r6.jpg",
+    "images": [
+      "images/kho_moi/rtw25_r6.jpg",
+      "images/kho_moi/rtw25_r7.jpg",
+      "images/kho_moi/rtw25_r8.jpg"
+    ],
+    "banner_image": "images/collections/kho_moi_rtw25_banner.jpg"
+  },
+  {
+    "file_id": "kho_moi",
+    "file_name": "Kho Mới (30.06.2025)",
+    "collection": "FRE FALL 2025",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_moi_fre_fall_2025",
+    "product_count": 45,
+    "cover_image": "images/kho_moi/fre_fall_2025_r6.jpg",
+    "images": [
+      "images/kho_moi/fre_fall_2025_r6.jpg",
+      "images/kho_moi/fre_fall_2025_r7.jpg",
+      "images/kho_moi/fre_fall_2025_r8.jpg"
+    ],
+    "banner_image": "images/collections/kho_moi_fre_fall_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_moi",
+    "file_name": "Kho Mới (30.06.2025)",
+    "collection": "IDAD 2025",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_moi_idad_2025",
+    "product_count": 51,
+    "cover_image": "images/kho_moi/idad_2025_r6.jpg",
+    "images": [
+      "images/kho_moi/idad_2025_r6.jpg",
+      "images/kho_moi/idad_2025_r7.jpg",
+      "images/kho_moi/idad_2025_r8.jpg"
+    ],
+    "banner_image": "images/collections/kho_moi_idad_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_moi",
+    "file_name": "Kho Mới (30.06.2025)",
+    "collection": "PREFALL 2024",
+    "category": "BST Pre-Fall",
+    "slug": "kho_moi_prefall_2024",
+    "product_count": 52,
+    "cover_image": "images/kho_moi/prefall_2024_r6.jpg",
+    "images": [
+      "images/kho_moi/prefall_2024_r6.jpg",
+      "images/kho_moi/prefall_2024_r7.jpg",
+      "images/kho_moi/prefall_2024_r8.jpg"
+    ],
+    "banner_image": "images/collections/kho_moi_prefall_2024_banner.jpg"
+  },
+  {
+    "file_id": "kho_moi",
+    "file_name": "Kho Mới (30.06.2025)",
+    "collection": "Copy of EG",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_moi_copy_of_eg",
+    "product_count": 13,
+    "cover_image": "images/kho_moi/copy_of_eg_r6.jpg",
+    "images": [
+      "images/kho_moi/copy_of_eg_r6.jpg",
+      "images/kho_moi/copy_of_eg_r7.jpg",
+      "images/kho_moi/copy_of_eg_r8.jpg"
+    ],
+    "banner_image": "images/collections/kho_moi_copy_of_eg_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "SPRING 2025",
+    "category": "Spring / Summer",
+    "slug": "kho_bridal_spring_2025",
+    "product_count": 20,
+    "cover_image": "images/kho_bridal/spring_2025_r5.jpg",
+    "images": [
+      "images/kho_bridal/spring_2025_r5.jpg",
+      "images/kho_bridal/spring_2025_r6.jpg",
+      "images/kho_bridal/spring_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_spring_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "FALL WINTER 2025",
+    "category": "Fall / Winter",
+    "slug": "kho_bridal_fall_winter_2025",
+    "product_count": 26,
+    "cover_image": "images/kho_bridal/fall_winter_2025_r5.jpg",
+    "images": [
+      "images/kho_bridal/fall_winter_2025_r5.jpg",
+      "images/kho_bridal/fall_winter_2025_r6.jpg",
+      "images/kho_bridal/fall_winter_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_fall_winter_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "BST ÁO DÀI",
+    "category": "BST Áo Dài",
+    "slug": "kho_bridal_bst__o_d_i",
+    "product_count": 28,
+    "cover_image": "images/kho_bridal/bst__o_d_i_r5.jpg",
+    "images": [
+      "images/kho_bridal/bst__o_d_i_r5.jpg",
+      "images/kho_bridal/bst__o_d_i_r6.jpg",
+      "images/kho_bridal/bst__o_d_i_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_bst__o_d_i_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "DEAR MY PRINCESS",
+    "category": "Váy Cưới Bridal",
+    "slug": "kho_bridal_dear_my_princess",
+    "product_count": 10,
+    "cover_image": "images/kho_bridal/dear_my_princess_r5.jpg",
+    "images": [
+      "images/kho_bridal/dear_my_princess_r5.jpg",
+      "images/kho_bridal/dear_my_princess_r6.jpg",
+      "images/kho_bridal/dear_my_princess_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_dear_my_princess_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "FALL WINTER 2022",
+    "category": "Fall / Winter",
+    "slug": "kho_bridal_fall_winter_2022",
+    "product_count": 14,
+    "cover_image": "images/kho_bridal/fall_winter_2022_r5.jpg",
+    "images": [
+      "images/kho_bridal/fall_winter_2022_r5.jpg",
+      "images/kho_bridal/fall_winter_2022_r6.jpg",
+      "images/kho_bridal/fall_winter_2022_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_fall_winter_2022_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "FALL WINTER 20232024",
+    "category": "Fall / Winter",
+    "slug": "kho_bridal_fall_winter_20232024",
+    "product_count": 27,
+    "cover_image": "images/kho_bridal/fall_winter_20232024_r5.jpg",
+    "images": [
+      "images/kho_bridal/fall_winter_20232024_r5.jpg",
+      "images/kho_bridal/fall_winter_20232024_r6.jpg",
+      "images/kho_bridal/fall_winter_20232024_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_fall_winter_20232024_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "ĐỀ XUẤT THÊM VÀO ĐỒ CHỤP TEELE",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_bridal_xu_t_th_m_v_o____ch_p_teele",
+    "product_count": 21,
+    "cover_image": "images/kho_bridal/xu_t_th_m_v_o____ch_p_teele_r2.jpg",
+    "images": [
+      "images/kho_bridal/xu_t_th_m_v_o____ch_p_teele_r2.jpg",
+      "images/kho_bridal/xu_t_th_m_v_o____ch_p_teele_r3.jpg",
+      "images/kho_bridal/xu_t_th_m_v_o____ch_p_teele_r4.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_xu_t_th_m_v_o____ch_p_teele_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "FW 2025",
+    "category": "Fall / Winter",
+    "slug": "kho_bridal_fw_2025",
+    "product_count": 0,
+    "cover_image": "",
+    "images": [],
+    "banner_image": "images/collections/kho_bridal_fw_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "TRƯNG BÀY RIN",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_bridal_tr_ng_b_y_rin",
+    "product_count": 48,
+    "cover_image": "images/kho_bridal/tr_ng_b_y_rin_r7.jpg",
+    "images": [
+      "images/kho_bridal/tr_ng_b_y_rin_r7.jpg",
+      "images/kho_bridal/tr_ng_b_y_rin_r8.jpg",
+      "images/kho_bridal/tr_ng_b_y_rin_r9.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_tr_ng_b_y_rin_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "KHO VEST+PHỤ KIỆN",
+    "category": "Phụ Kiện",
+    "slug": "kho_bridal_kho_vest_ph__ki_n",
+    "product_count": 80,
+    "cover_image": "images/kho_bridal/kho_vest_ph__ki_n_r5.jpg",
+    "images": [
+      "images/kho_bridal/kho_vest_ph__ki_n_r5.jpg",
+      "images/kho_bridal/kho_vest_ph__ki_n_r6.jpg",
+      "images/kho_bridal/kho_vest_ph__ki_n_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_kho_vest_ph__ki_n_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "ĐỒ CHỤP HÌNH BRIDAL X TEELE",
+    "category": "Váy Cưới Bridal",
+    "slug": "kho_bridal_ch_p_h_nh_bridal_x_teele",
+    "product_count": 47,
+    "cover_image": "images/kho_bridal/ch_p_h_nh_bridal_x_teele_r5.jpg",
+    "images": [
+      "images/kho_bridal/ch_p_h_nh_bridal_x_teele_r5.jpg",
+      "images/kho_bridal/ch_p_h_nh_bridal_x_teele_r6.jpg",
+      "images/kho_bridal/ch_p_h_nh_bridal_x_teele_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_ch_p_h_nh_bridal_x_teele_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "PK - TẦNG TRỆT",
+    "category": "Phụ Kiện",
+    "slug": "kho_bridal_pk___t_ng_tr_t",
+    "product_count": 25,
+    "cover_image": "images/kho_bridal/pk___t_ng_tr_t_r3.jpg",
+    "images": [
+      "images/kho_bridal/pk___t_ng_tr_t_r3.jpg",
+      "images/kho_bridal/pk___t_ng_tr_t_r4.jpg",
+      "images/kho_bridal/pk___t_ng_tr_t_r5.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_pk___t_ng_tr_t_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "NHẬP THÊM T72025",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_bridal_nh_p_th_m_t72025",
+    "product_count": 1,
+    "cover_image": "images/kho_bridal/nh_p_th_m_t72025_r5.jpg",
+    "images": [
+      "images/kho_bridal/nh_p_th_m_t72025_r5.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_nh_p_th_m_t72025_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "PK - TẦNG 2",
+    "category": "Phụ Kiện",
+    "slug": "kho_bridal_pk___t_ng_2",
+    "product_count": 30,
+    "cover_image": "images/kho_bridal/pk___t_ng_2_r3.jpg",
+    "images": [
+      "images/kho_bridal/pk___t_ng_2_r3.jpg",
+      "images/kho_bridal/pk___t_ng_2_r4.jpg",
+      "images/kho_bridal/pk___t_ng_2_r5.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_pk___t_ng_2_banner.jpg"
+  },
+  {
+    "file_id": "kho_bridal",
+    "file_name": "Kho Bridal 2026",
+    "collection": "PK - IDAD",
+    "category": "Phụ Kiện",
+    "slug": "kho_bridal_pk___idad",
+    "product_count": 33,
+    "cover_image": "images/kho_bridal/pk___idad_r3.jpg",
+    "images": [
+      "images/kho_bridal/pk___idad_r3.jpg",
+      "images/kho_bridal/pk___idad_r4.jpg",
+      "images/kho_bridal/pk___idad_r5.jpg"
+    ],
+    "banner_image": "images/collections/kho_bridal_pk___idad_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "PREFALL 26",
+    "category": "BST Pre-Fall",
+    "slug": "kho_rin_prefall_26",
+    "product_count": 69,
+    "cover_image": "images/kho_rin/prefall_26_r3.jpg",
+    "images": [
+      "images/kho_rin/prefall_26_r3.jpg",
+      "images/kho_rin/prefall_26_r12.jpg",
+      "images/kho_rin/prefall_26_r21.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_prefall_26_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "1225 HOLIDAY 2025",
+    "category": "BST Holiday",
+    "slug": "kho_rin_1225_holiday_2025",
+    "product_count": 21,
+    "cover_image": "images/kho_rin/1225_holiday_2025_r5.jpg",
+    "images": [
+      "images/kho_rin/1225_holiday_2025_r5.jpg",
+      "images/kho_rin/1225_holiday_2025_r6.jpg",
+      "images/kho_rin/1225_holiday_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_1225_holiday_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "0425 PREFALL 2025",
+    "category": "BST Pre-Fall",
+    "slug": "kho_rin_0425_prefall_2025",
+    "product_count": 40,
+    "cover_image": "images/kho_rin/0425_prefall_2025_r5.jpg",
+    "images": [
+      "images/kho_rin/0425_prefall_2025_r5.jpg",
+      "images/kho_rin/0425_prefall_2025_r6.jpg",
+      "images/kho_rin/0425_prefall_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_0425_prefall_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "1225 ÁO DÀI TẾT 2025",
+    "category": "BST Áo Dài",
+    "slug": "kho_rin_1225__o_d_i_t_t_2025",
+    "product_count": 10,
+    "cover_image": "images/kho_rin/1225__o_d_i_t_t_2025_r5.jpg",
+    "images": [
+      "images/kho_rin/1225__o_d_i_t_t_2025_r5.jpg",
+      "images/kho_rin/1225__o_d_i_t_t_2025_r6.jpg",
+      "images/kho_rin/1225__o_d_i_t_t_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_1225__o_d_i_t_t_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "0924 IDAD 2025",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_0924_idad_2025",
+    "product_count": 37,
+    "cover_image": "images/kho_rin/0924_idad_2025_r5.jpg",
+    "images": [
+      "images/kho_rin/0924_idad_2025_r5.jpg",
+      "images/kho_rin/0924_idad_2025_r6.jpg",
+      "images/kho_rin/0924_idad_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_0924_idad_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "PHỤ KIỆN 2025",
+    "category": "Phụ Kiện",
+    "slug": "kho_rin_ph__ki_n_2025",
+    "product_count": 10,
+    "cover_image": "images/kho_rin/ph__ki_n_2025_r4.jpg",
+    "images": [
+      "images/kho_rin/ph__ki_n_2025_r4.jpg",
+      "images/kho_rin/ph__ki_n_2025_r5.jpg",
+      "images/kho_rin/ph__ki_n_2025_r6.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_ph__ki_n_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "1224 RTW 2025",
+    "category": "Ready To Wear (RTW)",
+    "slug": "kho_rin_1224_rtw_2025",
+    "product_count": 53,
+    "cover_image": "images/kho_rin/1224_rtw_2025_r5.jpg",
+    "images": [
+      "images/kho_rin/1224_rtw_2025_r5.jpg",
+      "images/kho_rin/1224_rtw_2025_r6.jpg",
+      "images/kho_rin/1224_rtw_2025_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_1224_rtw_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "0925 LADY NEWVERSION T9.2025",
+    "category": "BST Lady",
+    "slug": "kho_rin_0925_lady_newversion_t9_2025",
+    "product_count": 39,
+    "cover_image": "images/kho_rin/0925_lady_newversion_t9_2025_r6.jpg",
+    "images": [
+      "images/kho_rin/0925_lady_newversion_t9_2025_r6.jpg",
+      "images/kho_rin/0925_lady_newversion_t9_2025_r7.jpg",
+      "images/kho_rin/0925_lady_newversion_t9_2025_r9.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_0925_lady_newversion_t9_2025_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "BRIDAL",
+    "category": "Váy Cưới Bridal",
+    "slug": "kho_rin_bridal",
+    "product_count": 36,
+    "cover_image": "images/kho_rin/bridal_r4.jpg",
+    "images": [
+      "images/kho_rin/bridal_r4.jpg",
+      "images/kho_rin/bridal_r6.jpg",
+      "images/kho_rin/bridal_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_bridal_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "CTP NO.2",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_ctp_no_2",
+    "product_count": 35,
+    "cover_image": "images/kho_rin/ctp_no_2_r5.jpg",
+    "images": [
+      "images/kho_rin/ctp_no_2_r5.jpg",
+      "images/kho_rin/ctp_no_2_r6.jpg",
+      "images/kho_rin/ctp_no_2_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_ctp_no_2_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "PREFALL 2024",
+    "category": "BST Pre-Fall",
+    "slug": "kho_rin_prefall_2024",
+    "product_count": 41,
+    "cover_image": "images/kho_rin/prefall_2024_r5.jpg",
+    "images": [
+      "images/kho_rin/prefall_2024_r5.jpg",
+      "images/kho_rin/prefall_2024_r6.jpg",
+      "images/kho_rin/prefall_2024_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_prefall_2024_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "MANACANH",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_manacanh",
+    "product_count": 5,
+    "cover_image": "images/kho_rin/manacanh_r5.jpg",
+    "images": [
+      "images/kho_rin/manacanh_r5.jpg",
+      "images/kho_rin/manacanh_r6.jpg",
+      "images/kho_rin/manacanh_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_manacanh_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "FALL WINTER 2023",
+    "category": "Fall / Winter",
+    "slug": "kho_rin_fall_winter_2023",
+    "product_count": 39,
+    "cover_image": "images/kho_rin/fall_winter_2023_r5.jpg",
+    "images": [
+      "images/kho_rin/fall_winter_2023_r5.jpg",
+      "images/kho_rin/fall_winter_2023_r6.jpg",
+      "images/kho_rin/fall_winter_2023_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_fall_winter_2023_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "KIM",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_kim",
+    "product_count": 9,
+    "cover_image": "images/kho_rin/kim_r5.jpg",
+    "images": [
+      "images/kho_rin/kim_r5.jpg",
+      "images/kho_rin/kim_r6.jpg",
+      "images/kho_rin/kim_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_kim_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "RESORT 2021",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_resort_2021",
+    "product_count": 1,
+    "cover_image": "images/kho_rin/resort_2021_r5.jpg",
+    "images": [
+      "images/kho_rin/resort_2021_r5.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_resort_2021_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "SUMMER 2022",
+    "category": "Spring / Summer",
+    "slug": "kho_rin_summer_2022",
+    "product_count": 12,
+    "cover_image": "images/kho_rin/summer_2022_r5.jpg",
+    "images": [
+      "images/kho_rin/summer_2022_r5.jpg",
+      "images/kho_rin/summer_2022_r6.jpg",
+      "images/kho_rin/summer_2022_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_summer_2022_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "CTP NO.1",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_ctp_no_1",
+    "product_count": 4,
+    "cover_image": "images/kho_rin/ctp_no_1_r5.jpg",
+    "images": [
+      "images/kho_rin/ctp_no_1_r5.jpg",
+      "images/kho_rin/ctp_no_1_r6.jpg",
+      "images/kho_rin/ctp_no_1_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_ctp_no_1_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "LADY",
+    "category": "BST Lady",
+    "slug": "kho_rin_lady",
+    "product_count": 29,
+    "cover_image": "images/kho_rin/lady_r5.jpg",
+    "images": [
+      "images/kho_rin/lady_r5.jpg",
+      "images/kho_rin/lady_r6.jpg",
+      "images/kho_rin/lady_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_lady_banner.jpg"
+  },
+  {
+    "file_id": "kho_rin",
+    "file_name": "Kho Trưng Bày Rin 2026",
+    "collection": "COLOR BLOCK SATEEN",
+    "category": "Dạ Hội & Thiết Kế",
+    "slug": "kho_rin_color_block_sateen",
+    "product_count": 16,
+    "cover_image": "images/kho_rin/color_block_sateen_r5.jpg",
+    "images": [
+      "images/kho_rin/color_block_sateen_r5.jpg",
+      "images/kho_rin/color_block_sateen_r6.jpg",
+      "images/kho_rin/color_block_sateen_r7.jpg"
+    ],
+    "banner_image": "images/collections/kho_rin_color_block_sateen_banner.jpg"
+  }
+]

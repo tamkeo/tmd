@@ -1,0 +1,39 @@
+{
+  "total_products": 1170,
+  "total_images": 1033,
+  "total_collections": 39,
+  "total_stock": 1594.0,
+  "total_value": 32920668657,
+  "total_value_formatted": "32.920.668.657 ₫",
+  "in_stock_count": 1010,
+  "categories": [
+    "BST Holiday",
+    "BST Lady",
+    "BST Pre-Fall",
+    "BST Áo Dài",
+    "Dạ Hội & Thiết Kế",
+    "Fall / Winter",
+    "Phụ Kiện",
+    "Ready To Wear (RTW)",
+    "Spring / Summer",
+    "Vest & Manto",
+    "Váy Cưới Bridal"
+  ],
+  "files": [
+    {
+      "id": "kho_moi",
+      "name": "Kho Mới (30.06.2025)",
+      "filename": "c:\\Users\\Admin\\Desktop\\New folder (2)\\BẢNG KHO MỚI 30.06.25.xlsx"
+    },
+    {
+      "id": "kho_bridal",
+      "name": "Kho Bridal 2026",
+      "filename": "c:\\Users\\Admin\\Desktop\\New folder (2)\\KHO BRIDAL 2026.xlsx"
+    },
+    {
+      "id": "kho_rin",
+      "name": "Kho Trưng Bày Rin 2026",
+      "filename": "c:\\Users\\Admin\\Desktop\\New folder (2)\\_ TRƯNG BÀY - FILE KHO RIN 2026.xlsx"
+    }
+  ]
+}
