@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cẩm Nang Quy Trình & Tra Cứu CTP - TeeLe</title>
+  <style>
+    :root {
+      --primary: #121212;
+      --secondary: #8c7355;
+      --accent: #d4af37;
+      --bg: #f4f5f7;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --warning-bg: #fffbeb;
+      --warning-border: #f59e0b;
+      --danger-bg: #fef2f2;
+      --danger-border: #ef4444;
+      --bottom-nav-height: 64px;
+      --sidebar-width: 270px;
+    }
+
+    /* Triệt tiêu hoàn toàn thanh cuộn ngang */
+    html, body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden !important;
+      position: relative;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      /* Tự động bẻ dòng với mọi văn bản, link dài hoặc mã code */
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.55;
+      color: var(--text);
+      background-color: var(--bg);
+      min-height: 100vh;
+    }
+
+    /* ================= DESKTOP SIDEBAR ================= */
+    aside.desktop-sidebar {
+      display: none;
+    }
+
+    /* ================= MAIN CONTENT ================= */
+    main {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 16px 14px calc(var(--bottom-nav-height) + 30px);
+    }
+
+    .top-header {
+      margin-bottom: 20px;
+    }
+
+    .top-header h1 {
+      font-size: 1.35rem;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      line-height: 1.3;
+    }
+
+    .top-header p {
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      margin-top: 4px;
+    }
+
+    section {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 18px 14px;
+      margin-bottom: 18px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--border);
+      scroll-margin-top: 16px;
+      width: 100%;
+    }
+
+    h2 {
+      color: var(--primary);
+      font-size: 1.15rem;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    h3 {
+      color: #374151;
+      font-size: 0.98rem;
+      margin: 16px 0 8px 0;
+    }
+
+    p {
+      margin-bottom: 10px;
+      font-size: 0.92rem;
+    }
+
+    ul, ol {
+      padding-left: 18px;
+      margin-bottom: 14px;
+      font-size: 0.91rem;
+    }
+
+    li {
+      margin-bottom: 6px;
+    }
+
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      color: #0f172a;
+      word-break: break-all;
+    }
+
+    a {
+      color: #b45309;
+      word-break: break-all;
+    }
+
+    /* Callouts & Badges */
+    .callout {
+      padding: 12px 14px;
+      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+      border-left: 4px solid;
+      width: 100%;
+    }
+
+    .callout-warning {
+      background-color: var(--warning-bg);
+      border-color: var(--warning-border);
+      color: #92400e;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin: 4px 0;
+    }
+
+    .badge-danger {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-primary {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    /* Responsive Data List (Thay thế table truyền thống) */
+    .data-card-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px 0;
+      width: 100%;
+    }
+
+    .data-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.88rem;
+    }
+
+    .data-card-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 4px;
+    }
+
+    .data-card-content {
+      color: #334155;
+    }
+
+    /* Step lists */
+    .step-list {
+      list-style: none;
+      counter-reset: step-counter;
+      padding-left: 0;
+    }
+
+    .step-list li {
+      counter-increment: step-counter;
+      position: relative;
+      padding-left: 36px;
+      margin-bottom: 14px;
+    }
+
+    .step-list li::before {
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 2px;
+      width: 24px;
+      height: 24px;
+      background: var(--secondary);
+      color: #fff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 24px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    /* ================= MOBILE BOTTOM BAR ================= */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.07);
+      z-index: 100;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .bottom-bar button, .bottom-bar a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      text-decoration: none;
+      color: #64748b;
+      font-size: 0.72rem;
+      font-weight: 500;
+      gap: 3px;
+      height: 100%;
+      cursor: pointer;
+    }
+
+    .bottom-bar button:active, .bottom-bar a:active,
+    .bottom-bar button.active, .bottom-bar a.active {
+      color: var(--secondary);
+    }
+
+    .bottom-bar svg {
+      width: 20px;
+      height: 20px;
+      stroke-width: 2;
+    }
+
+    /* ================= BOTTOM SHEET DRAWER ================= */
+    .sheet-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 110;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .sheet-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .bottom-sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #ffffff;
+      border-radius: 20px 20px 0 0;
+      z-index: 120;
+      padding: 16px 18px 36px;
+      max-height: 82vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .bottom-sheet.active {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 5px;
+      background: #cbd5e1;
+      border-radius: 10px;
+      margin: 0 auto 14px;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sheet-header h3 {
+      font-size: 1.05rem;
+      margin: 0;
+      color: var(--primary);
+    }
+
+    .sheet-header .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #94a3b8;
+      cursor: pointer;
+      padding: 2px 8px;
+    }
+
+    .sheet-menu-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sheet-menu-list li {
+      margin-bottom: 8px;
+    }
+
+    .sheet-menu-list a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+    }
+
+    .sheet-menu-list a:active {
+      background: #e2e8f0;
+    }
+
+    .sheet-menu-list a .icon {
+      font-size: 1.15rem;
+    }
+
+    /* ================= MÀN HÌNH MÁY TÍNH / DESKTOP (> 860px) ================= */
+    @media (min-width: 861px) {
+      body {
+        display: flex;
+      }
+      aside.desktop-sidebar {
+        display: block;
+        width: var(--sidebar-width);
+        background: var(--primary);
+        color: #fff;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        padding: 24px 16px;
+        z-index: 90;
+      }
+      aside.desktop-sidebar .brand {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #fff;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      aside.desktop-sidebar .brand span {
+        color: var(--accent);
+        display: block;
+        font-size: 0.78rem;
+        font-weight: 400;
+        margin-top: 4px;
+      }
+      aside.desktop-sidebar nav ul {
+        list-style: none;
+      }
+      aside.desktop-sidebar nav a {
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 0.88rem;
+        display: block;
+        padding: 9px 12px;
+        border-radius: 6px;
+        margin-bottom: 4px;
+        transition: all 0.2s;
+      }
+      aside.desktop-sidebar nav a:hover {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        padding-left: 16px;
+      }
+      main {
+        margin-left: var(--sidebar-width);
+        padding: 36px 40px;
+      }
+      .bottom-bar, .sheet-overlay, .bottom-sheet {
+        display: none !important;
+      }
+      .data-card-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= DESKTOP SIDEBAR ================= -->
+  <aside class="desktop-sidebar">
+    <div class="brand">
+      Chung Thanh Phong
+      <span>Sổ Tay Tra Cứu Nghiệp Vụ</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#section-resources">📌 BST Mới & Link Giá</a></li>
+        <li><a href="#section-rules">1. Nội Quy Showroom</a></li>
+        <li><a href="#section-sales-jd">2. Mô Tả Công Việc Sales</a></li>
+        <li><a href="#section-work-process">3. Quy Trình Làm Việc & CSKH</a></li>
+        <li><a href="#section-tailoring">4. Đặt May & Xưởng</a></li>
+        <li><a href="#section-studio">5. Studio & Photo Album</a></li>
+        <li><a href="#section-wedding-day">6. Chăm Sóc Ngày Cưới</a></li>
+        <li><a href="#section-packaging">7. Đóng Gói CTPB</a></li>
+        <li><a href="#section-payment">8. Quy Định Thanh Toán</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main>
+    <div class="top-header">
+      <h1>Sổ Tay Quy Trình Vận Hành</h1>
+      <p>RIN by CTP — CHUNG THANH PHONG BRIDAL — TEE LE STUDIO</p>
+    </div>
+
+    <!-- SECTION 0: BST MỚI -->
+    <section id="section-resources">
+      <h2>📌 Thông Báo & Link BST Mới</h2>
+      <div class="callout callout-warning">
+        <strong>LƯU Ý QUAN TRỌNG VỀ BST MỚI:</strong>
+        <ul style="margin-top: 8px;">
+          <li><strong>Link Lookbook BST mới gửi khách:</strong> <code>bit.ly/CTP-EDTION-2027</code> (Đã gửi thêm 03 file PDF qua hotline để forward cho khách).</li>
+          <li><strong>Kho ảnh / Giá Final:</strong> <a href="https://drive.google.com/drive/folders/16MgqJGJ1qRI09afm3hM1PPUxrLG8itGt?usp=drive_link" target="_blank" rel="noopener noreferrer">Thư mục Drive Giá Final & Ảnh Lẻ</a>
+            <br><span class="badge badge-danger">KHÔNG GỬI LINK NÀY CHO KHÁCH</span>
+            <br><em>Cách dùng:</em> Sau khi khách hỏi mẫu nào, tải hình lẻ và báo giá mẫu đó cho khách.
+          </li>
+          <li><strong>Nhiệm vụ:</strong> Mụi update thêm giá lại vào file Kho Tổng.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- SECTION 1: NỘI QUY CỬA HÀNG -->
+    <section id="section-rules">
+      <h2>1. Nội Quy Chung Tại Showroom</h2>
+
+      <h3>1.1 Giờ Làm Việc & Chấm Công</h3>
+      <ul>
+        <li><strong>Giờ mở cửa:</strong> 08h45 sáng mỗi ngày (3 chìa khóa - bàn giao nhân viên, bảo vệ & NTK Chung Thanh Phong).</li>
+        <li><strong>Ca làm việc:</strong>
+          <ul>
+            <li><strong>Ca Sáng:</strong> 08h55 – 17h00</li>
+            <li><strong>Ca Chiều:</strong> 12h55 – 21h00</li>
+          </ul>
+        </li>
+        <li><strong>Bấm vân tay:</strong> Sau 5 phút vào ca tính là <strong>Trễ ca</strong>. Quên cả vào & ra: không tính công; quên 1 đầu: tính nửa công.</li>
+        <li><strong>Đổi ca / Vắng mặt:</strong> Báo trước 1 ngày. Luôn có ít nhất 1 Sale trực ca. Vắng/trễ/về sớm từ 30 phút phải xin phép Giám sát bằng tin nhắn.</li>
+      </ul>
+
+      <h3>1.2 Chế Độ Nghỉ & Kỷ Luật</h3>
+      <ul>
+        <li>Nghỉ phép: <strong>02 ngày/tháng</strong> (Không nghỉ cùng lúc 2 người/ngày, không nghỉ 2 ngày liền nhau, không nghỉ vào ngày có lịch làm việc).</li>
+        <li>Nghỉ đột xuất đau ốm: Phải có giấy khám hoặc đơn thuốc bác sĩ bổ sung ngay khi đi làm lại.</li>
+        <li>Nghỉ không phép: <span class="badge badge-danger">Trừ 200% ngày lương</span>. Nghỉ không phép quá 3 lần: bồi thường 01 tháng tổng lương.</li>
+        <li>Nghỉ việc: <strong>Báo trước 60 ngày</strong>. Nghỉ ngang sẽ không nhận lương/thưởng và bồi thường 01 tháng lương.</li>
+      </ul>
+
+      <h3>1.3 Tác Phong & Tiếp Đón</h3>
+      <ul>
+        <li><strong>Đồng phục:</strong> Áo thun CTP, blazer đen phối quần đen, đeo bảng tên. Thử việc mặc áo thun CTP và tự trang bị quần tây đen.</li>
+        <li>Nữ tóc dài cột hoặc búi cao khi tiếp khách. Móng tay cắt ngắn (không đính đá cản trở việc cài khuy, kéo khóa áo).</li>
+        <li>Ăn sáng trước 09h00 (không bấm vân tay rồi mới ra ngoài ăn). Không để ly nhựa dùng 1 lần tại sofa tiếp khách.</li>
+        <li><strong>Mời nước:</strong> Khách thường mời nước suối ly chân cao hoặc nước lạnh Lầu 3. Khách VIP hẹn NTK Chung Thanh Phong chuẩn bị thêm hoa quả tươi, nước ép, trà bánh kẹo.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 2: MÔ TẢ CÔNG VIỆC SALES -->
+    <section id="section-sales-jd">
+      <h2>2. Mô Tả Công Việc Sales</h2>
+      <p>Sales đại diện trực tiếp cho thương hiệu, kết hợp tư vấn bán hàng và xây dựng mối quan hệ chăm sóc khách hàng lâu dài.</p>
+
+      <h3>2.1 Các Hình Thức Bán Hàng</h3>
+      <ul>
+        <li><strong>Sales B2C trực tiếp:</strong> Tư vấn và fitting trực tiếp tại Showroom.</li>
+        <li><strong>Sales Online:</strong> Trực hotline, Zalo, fanpage, website.</li>
+        <li><strong>Sales B2B (CTPBridal):</strong> Hợp tác ưu đãi với Wedding Planner, Decor, Studio quay chụp, Khách sạn 5 sao.</li>
+      </ul>
+
+      <h3>2.2 Hệ Sinh Thái Sản Phẩm Cung Cấp</h3>
+      <div class="data-card-grid">
+        <div class="data-card">
+          <div class="data-card-title">Trang Phục Cưới</div>
+          <div class="data-card-content">Váy chính tiệc, váy Pre-wedding, váy Elopement, Áo dài cưới CD-CR, váy After-party, Lễ phục Chú Rể.</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Gia Đình & Khách Mời</div>
+          <div class="data-card-content">Trang phục cho Phụ huynh, Dâu phụ - Rể phụ, Trang phục trẻ em (Flower Girl).</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Nhiếp Ảnh (Tee Le)</div>
+          <div class="data-card-content">Chụp Pre-wedding studio/ngoại cảnh, quay chụp phóng sự cưới, Beauty cá nhân, chụp kỷ niệm gia đình.</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Đồng Hành Ngày Cưới</div>
+          <div class="data-card-content">Makeup & Hair ngày cưới, Ekip CTP hỗ trợ hình ảnh CD-CR suốt buổi tiệc.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: QUY TRÌNH LÀM VIỆC & CSKH -->
+    <section id="section-work-process">
+      <h2>3. Quy Trình Làm Việc & CSKH</h2>
+
+      <h3>3.1 Quản Lý Data Khách Hàng</h3>
+      <ul>
+        <li>Lấy đủ: Tên, SĐT, Email, Ngày sinh, Địa chỉ, Số đo, Sở thích. Nhập 100% vào KiotViet khi xuất hóa đơn.</li>
+        <li>Phân loại: <em>Tiềm năng / Không tiềm năng / Đang theo dõi & phản hồi sau</em>.</li>
+        <li>Hàng tháng: Team Bridal chuyển data sang Team RIN để giới thiệu dòng đồ ứng dụng và tặng voucher ưu đãi.</li>
+        <li><span class="badge badge-danger">BẢO MẬT TUYỆT ĐỐI</span> Không tiết lộ thông tin khách hàng ra bên ngoài.</li>
+      </ul>
+
+      <h3>3.2 Tiêu Chuẩn Trực Inbox Online</h3>
+      <div class="callout callout-warning">
+        <ul>
+          <li><strong>Trong giờ làm:</strong> Phản hồi tin nhắn trong vòng <strong>dưới 5 phút</strong>.</li>
+          <li><strong>Ngoài ca làm:</strong> Theo dõi phản hồi không trễ quá <strong>15 phút</strong>.</li>
+          <li><strong>Sau 23h30:</strong> Bật chế độ tự động. Sáng hôm sau phản hồi sớm kèm lời xin lỗi lịch sự.</li>
+          <li><span class="badge badge-primary">SALE LUÔN LÀ NGƯỜI NHẮN TIN SAU CÙNG TRÊN INBOX</span>.</li>
+          <li>Thỏa thuận qua hotline với khách Bridal phải nhắn xác nhận lại vào inbox Page.</li>
+        </ul>
+      </div>
+
+      <h3>3.3 Thưởng & Kỷ Luật Quy Trình</h3>
+      <div class="data-card-grid">
+        <div class="data-card">
+          <div class="data-card-title">Đánh giá 5★ hoặc Review</div>
+          <div class="data-card-content">Thưởng: <strong>+50.000 VNĐ / lần</strong></div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Đạt 5★ kèm Review khen ngợi chi tiết</div>
+          <div class="data-card-content">Thưởng: <strong>+150.000 VNĐ / lần</strong></div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Vi phạm quy trình lần 1</div>
+          <div class="data-card-content">Nhắc nhở trực tiếp</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Vi phạm quy trình lần 2</div>
+          <div class="data-card-content">Trừ 30% lương trách nhiệm (hoặc 1 ngày lương)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: ĐẶT MAY & XƯỞNG -->
+    <section id="section-tailoring">
+      <h2>4. Quy Trình Đặt May Váy & Xưởng</h2>
+      <p><em>Thời gian hoàn thiện tiêu chuẩn: <strong>6 – 8 tuần</strong>.</em></p>
+
+      <ol class="step-list">
+        <li><strong>Xác định mẫu & Ngân sách:</strong> Tư vấn form dáng, nguyên liệu.</li>
+        <li><strong>Khách cọc 80%:</strong> Xác nhận tin nhắn/email hợp đồng và xuất hóa đơn KiotViet.</li>
+        <li><strong>Lấy số đo:</strong> Theo template chuẩn của Xưởng. <em>Bắt buộc quay clip lấy số đo gửi xưởng</em>.</li>
+        <li><strong>Bàn giao Thiết Kế & Xưởng:</strong> Gửi mẫu, số đo, ngày cưới, ngày fitting 1 và final.</li>
+        <li><strong>Lên rập & Dựng form:</strong> Xưởng gửi ảnh form váy mộc trước khi đính kết.</li>
+        <li><strong>Fitting 1 (Fitting Form):</strong> Khách showroom đến thử form dáng; khách online xem ảnh/clip form váy trên ma-nơ-canh.</li>
+        <li><strong>Đính kết thủ công:</strong> Xưởng hoàn thiện đính kết và kiểm tra số đo.</li>
+        <li><strong>Fitting Final:</strong> Thử váy hoàn thiện, chụp ảnh fitting, hướng dẫn mặc tùng.</li>
+        <li><strong>Thanh toán 20% còn lại:</strong> Tất toán công nợ và đóng gói bàn giao (khách ở xa chuyển qua bên ship Thành Luân).</li>
+        <li><strong>Ekip chăm sóc ngày cưới:</strong> Cử 1 nhân sự hỗ trợ mặc váy trong ngày cưới tại TP.HCM.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 5: STUDIO & PHOTO ALBUM -->
+    <section id="section-studio">
+      <h2>5. Chụp Ảnh & Sản Xuất Album TeeLe</h2>
+
+      <h3>5.1 Buổi Chụp Tại Studio Q2</h3>
+      <ul>
+        <li>Chốt concept, nhận cọc, tạo hợp đồng và lên Google Calendar chung.</li>
+        <li>Hẹn khách fitting váy chụp trước 2 – 3 ngày; báo nhắc lịch ekip photo, makeup.</li>
+        <li>Sale & Hậu cần có mặt trước 30 phút tại Studio Q2 kiểm tra trang phục, gửi layout makeup cho Anh Tee. Cuối buổi cho khách ký bản đánh giá.</li>
+      </ul>
+
+      <h3>5.2 5 Bước Sản Xuất Photo Album</h3>
+      <ol class="step-list">
+        <li><strong>Gửi ảnh gốc (Sau 3 ngày):</strong> Anh Tee gửi link ảnh resize, Sale forward mail cho khách chọn ảnh (hạn 5 - 7 ngày).</li>
+        <li><strong>Khách chọn ảnh:</strong> Chuyển danh sách cho Anh Thiện (Photoshop) xử lý, kèm ghi chú hạn giao.</li>
+        <li><strong>Duyệt Retouch & Layout (3 – 7 ngày):</strong> Khách nhận 1-2 ảnh mẫu retouch và layout hoàn chỉnh. <em>Khách được sửa miễn phí tối đa 2 lần</em>.</li>
+        <li><strong>Xuất File In Ấn:</strong> Anh Thiện xuất 5 folder (Ảnh 60x90, Bìa, Final Retouch, Gallery, Lịch), Anh Tee duyệt và gửi xưởng in.</li>
+        <li><strong>Nghiệm thu & Bàn giao (5 – 7 ngày in):</strong> Sale kiểm tra chất lượng in, đóng gói kèm Thư cảm ơn TeeLe Studio giao cho khách.</li>
+      </ol>
+    </section>
+
+    <!-- SECTION 6: CHĂM SÓC KHÁCH NGÀY CƯỚI -->
+    <section id="section-wedding-day">
+      <h2>6. Ekip Chăm Sóc Khách Ngày Cưới</h2>
+      <ul>
+        <li><strong>1. Nhận Master Plan:</strong> Nhận lịch trình từ Wedding Planner hoặc Cô dâu.</li>
+        <li><strong>2. Khảo sát:</strong> Nắm thông tin liên hệ, phòng makeup, phòng thay đồ, giờ nhận phòng.</li>
+        <li><strong>3. Tạm ứng chi phí:</strong> Lập danh sách nhân sự, dự trù xe và ăn uống, xin duyệt tạm ứng từ CEO Chung Thanh Hương và Kế toán.</li>
+        <li><strong>4. Lên Timeline nội bộ:</strong> Khớp lịch với Master Plan và nhắc giờ khởi hành.</li>
+        <li><strong>5. Setup phòng Get Ready:</strong> Dựng ma-nơ-canh, treo và ủi phẳng váy cưới, bày bàn phụ kiện, giữ phòng gọn gàng.</li>
+        <li><strong>6. Theo sát tiến độ:</strong> Bàn giao cô dâu cho ekip quay chụp đúng giờ quy định.</li>
+        <li><strong>7. Nghiệm thu & Bàn giao:</strong> Quay video phòng đã dọn dẹp sạch sẽ bàn giao lại cho Planner; quyết toán chi phí với Kế toán.</li>
+      </ul>
+    </section>
+
+    <!-- SECTION 7: QUY TRÌNH ĐÓNG GÓI -->
+    <section id="section-packaging">
+      <h2>7. Quy Trình Đóng Gói Thành Phẩm CTPB</h2>
+      <p><em>Vật liệu: Móc nhựa CTP, túi nhựa dài, bao A vải trắng, túi vải đen, ruy băng CTP, hộp quà, vali kem.</em></p>
+
+      <div class="data-card-grid">
+        <div class="data-card">
+          <div class="data-card-title">Đóng gói VEST</div>
+          <div class="data-card-content">Treo móc nhựa → lồng túi nhựa CTP → lồng Bao A vải đen → gập đôi kéo khóa → thắt nơ ruy băng CTP.</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Đóng gói VÁY CƯỚI</div>
+          <div class="data-card-content">Lồng Bao A vải trắng → gập 3 phần bằng nhau → buộc quai xách → thắt nơ ruy băng bản lớn tại móc (cắt chéo, không cắt vào logo).</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">HỘP QUÀ TẶNG</div>
+          <div class="data-card-content">Gồm: 01 Thư cảm ơn + 01 Veil trơn + 01 Áo makeup + 01 Khung hình sketch. Thắt ruy băng bản lớn quanh hộp (độ dài 24 logo).</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">VALI KEM CTP</div>
+          <div class="data-card-content">Xếp váy, hộp quà, khung hình vào vali → khóa dây kéo → thắt ruy băng bản nhỏ (18-20 logo). Đơn gửi tỉnh đóng thùng carton dán băng keo CTP.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 8: QUY ĐỊNH THANH TOÁN -->
+    <section id="section-payment">
+      <h2>8. Quy Định Về Thanh Toán</h2>
+      <ul>
+        <li><strong>100% Giao dịch bắt buộc qua KiotViet:</strong> Bán lẻ, cọc may, giặt hấp, phụ thu...</li>
+        <li>Bán đúng bảng giá niêm yết của BGĐ, chiết khấu riêng phải có văn bản/tin nhắn duyệt lưu lại.</li>
+      </ul>
+
+      <div class="data-card-grid">
+        <div class="data-card">
+          <div class="data-card-title">Tiền mặt</div>
+          <div class="data-card-content">Chỉ nhận <strong>VNĐ</strong> (không nhận ngoại tệ).</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Quẹt thẻ POS</div>
+          <div class="data-card-content">In đủ <strong>3 liên</strong> (khách ký 2 liên nộp kế toán, giao khách 1 liên).</div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Chuyển khoản VCB (Chung Thanh Phong)</div>
+          <div class="data-card-content">
+            • Nhánh RIN: <code>0331000458616</code><br>
+            • Nhánh Bridal & TeeLe: <code>0331000458613</code>
+          </div>
+        </div>
+        <div class="data-card">
+          <div class="data-card-title">Quốc tế (PayPal)</div>
+          <div class="data-card-content">
+            <code>paypal.me/chungthanhphong</code> (chụp biên nhận gửi Kế toán).
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= MOBILE BOTTOM BAR ================= -->
+  <div class="bottom-bar">
+    <a href="#section-resources" class="active">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+      </svg>
+      <span>BST & Giá</span>
+    </a>
+
+    <a href="#section-rules">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <span>Nội Quy</span>
+    </a>
+
+    <a href="#section-tailoring">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+      </svg>
+      <span>May Váy</span>
+    </a>
+
+    <a href="#section-payment">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+      </svg>
+      <span>Thanh Toán</span>
+    </a>
+
+    <button type="button" id="btn-open-sheet">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+      <span>Tất Cả Mục</span>
+    </button>
+  </div>
+
+  <!-- ================= BOTTOM SHEET DRAWER ================= -->
+  <div class="sheet-overlay" id="sheet-overlay"></div>
+  <div class="bottom-sheet" id="bottom-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <h3>Mục Lục Quy Trình</h3>
+      <button class="close-btn" id="btn-close-sheet">&times;</button>
+    </div>
+    <ul class="sheet-menu-list">
+      <li><a href="#section-resources" class="sheet-link"><span class="icon">📌</span> BST & Kho Giá Final</a></li>
+      <li><a href="#section-rules" class="sheet-link"><span class="icon">⏰</span> 1. Giờ Giấc & Nội Quy Showroom</a></li>
+      <li><a href="#section-sales-jd" class="sheet-link"><span class="icon">💼</span> 2. Mô Tả Công Việc Sales CTP</a></li>
+      <li><a href="#section-work-process" class="sheet-link"><span class="icon">📱</span> 3. Quy Trình Inbox & CSKH</a></li>
+      <li><a href="#section-tailoring" class="sheet-link"><span class="icon">👗</span> 4. Quy Trình Đặt May & Xưởng</a></li>
+      <li><a href="#section-studio" class="sheet-link"><span class="icon">📸</span> 5. Chụp Ảnh Studio & Photo Album</a></li>
+      <li><a href="#section-wedding-day" class="sheet-link"><span class="icon">👰</span> 6. Ekip Takecare Ngày Cưới</a></li>
+      <li><a href="#section-packaging" class="sheet-link"><span class="icon">🎁</span> 7. Quy Chuẩn Đóng Gói CTPB</a></li>
+      <li><a href="#section-payment" class="sheet-link"><span class="icon">💳</span> 8. Quy Định Thu Tiền & Số TK VCB</a></li>
+    </ul>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    const openSheetBtn = document.getElementById('btn-open-sheet');
+    const closeSheetBtn = document.getElementById('btn-close-sheet');
+    const overlay = document.getElementById('sheet-overlay');
+    const bottomSheet = document.getElementById('bottom-sheet');
+    const sheetLinks = document.querySelectorAll('.sheet-link');
+
+    function openDrawer() {
+      overlay.classList.add('active');
+      bottomSheet.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDrawer() {
+      overlay.classList.remove('active');
+      bottomSheet.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    openSheetBtn.addEventListener('click', openDrawer);
+    closeSheetBtn.addEventListener('click', closeDrawer);
+    overlay.addEventListener('click', closeDrawer);
+
+    sheetLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeDrawer();
+      });
+    });
+  </script>
+</body>
+</html>
