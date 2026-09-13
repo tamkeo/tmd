@@ -39,6 +39,27 @@
       file: 'all',
       category: 'all'
     },
+    visualSearch: {
+      workerUrl: localStorage.getItem('CTP_WORKER_URL') || '',
+      currentEngine: localStorage.getItem('CTP_WORKER_URL') ? 'worker' : 'client',
+      activeTab: 'upload',
+      imageSrc: null,
+      cropBox: { x: 0.1, y: 0.05, width: 0.8, height: 0.9 },
+      stream: null,
+      facingMode: 'environment',
+      queryVector: null,
+      results: [],
+      filteredResults: [],
+      resultFilter: 'all',
+      samples: [
+        { name: 'Váy Cưới Kim Tuyến Bridal', cat: 'Váy Cưới Bridal', image: 'images/kho_bridal/spring_2025_r5.jpg' },
+        { name: 'Đầm Draping Lệch Vai Nude', cat: 'RTW', image: 'images/kho_moi/rtw25_r31.jpg' },
+        { name: 'Đầm Body Đen Draping Cut Out', cat: 'RTW', image: 'images/kho_moi/rtw25_r25.jpg' },
+        { name: 'Áo Dài Tết Truyền Thống Đỏ', cat: 'BST Áo Dài', image: 'images/kho_bridal/bst__o_d_i_r5.jpg' },
+        { name: 'Đầm Dạ Hội BST PreFall 26', cat: 'Kho Trưng Bày Rin', image: 'images/kho_rin/prefall_26_r3.jpg' },
+        { name: 'Vest Cưới Phụ Kiện Nam', cat: 'Phụ Kiện', image: 'images/kho_bridal/kho_vest_ph__ki_n_r5.jpg' }
+      ]
+    },
     theme: localStorage.getItem('CTP_THEME') || 'light'
   };
 
@@ -49,6 +70,7 @@
     initTheme();
     setupDate();
     setupEventListeners();
+    initVisualSearch();
     await loadAppData();
     renderAllViews();
   }
@@ -902,6 +924,13 @@
           <span class="prod-stock-badge ${inStock ? 'in-stock' : 'out-stock'}">
             ${inStock ? `Tồn: ${p.stock}` : 'Hết hàng'}
           </span>
+          ${p.similarity_percent !== undefined
+            ? `<span class="prod-sim-badge ${p.similarity_percent >= 90 ? 'high-match' : (p.similarity_percent >= 80 ? 'good-match' : 'fair-match')}">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                ${p.similarity_percent}% Khớp
+               </span>`
+            : ''
+          }
           <button class="prod-fav-btn ${isPicked ? 'active' : ''}" onclick="togglePicklist('${p.id}', event)" title="Chọn mẫu này">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="${isPicked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           </button>
@@ -1191,8 +1220,752 @@
   };
 
   // ===================================================
-  // LIGHTBOX
+  // VISUAL SEARCH CORE (SHOPEE STYLE LENS)
   // ===================================================
+  function initVisualSearch() {
+    // 1. Triggers
+    const btnTop = document.getElementById('btn-top-visual-search');
+    if (btnTop) btnTop.addEventListener('click', openVisualSearchModal);
+
+    const btnDash = document.getElementById('btn-dash-visual-search');
+    if (btnDash) btnDash.addEventListener('click', openVisualSearchModal);
+
+    const btnSearch = document.getElementById('btn-camera-search');
+    if (btnSearch) btnSearch.addEventListener('click', openVisualSearchModal);
+
+    const btnClose = document.getElementById('btn-close-vs-modal');
+    if (btnClose) btnClose.addEventListener('click', closeVisualSearchModal);
+
+    const vsModal = document.getElementById('visual-search-modal');
+    if (vsModal) {
+      vsModal.addEventListener('click', (e) => {
+        if (e.target === vsModal) closeVisualSearchModal();
+      });
+    }
+
+    // 2. Source Tabs (Upload / Camera / Samples)
+    document.querySelectorAll('.vs-nav-tab[data-vstab]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-vstab');
+        switchVisualSearchTab(tab);
+      });
+    });
+
+    // 3. Dropzone & File Input
+    const dropzone = document.getElementById('vs-dropzone');
+    const fileInput = document.getElementById('vs-file-input');
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          handleSelectedFile(e.dataTransfer.files[0]);
+        }
+      });
+      fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          handleSelectedFile(e.target.files[0]);
+        }
+      });
+    }
+
+    // 4. Clipboard Paste (Ctrl + V)
+    window.addEventListener('paste', (e) => {
+      const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+      for (const item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          const blob = item.getAsFile();
+          openVisualSearchModal();
+          handleSelectedFile(blob);
+          showToast('Đã nhận diện ảnh từ bộ nhớ tạm (Clipboard)!');
+          break;
+        }
+      }
+    });
+
+    // 5. Camera controls
+    const btnCapture = document.getElementById('btn-vs-capture-photo');
+    if (btnCapture) btnCapture.addEventListener('click', captureLivePhoto);
+
+    const btnSwitchCam = document.getElementById('btn-vs-switch-camera');
+    if (btnSwitchCam) {
+      btnSwitchCam.addEventListener('click', () => {
+        state.visualSearch.facingMode = state.visualSearch.facingMode === 'user' ? 'environment' : 'user';
+        startCameraStream();
+      });
+    }
+
+    // 6. Cropper actions
+    const btnExecute = document.getElementById('btn-vs-execute-search');
+    if (btnExecute) btnExecute.addEventListener('click', executeVisualSearch);
+
+    const btnChangeImg = document.getElementById('btn-vs-change-img');
+    if (btnChangeImg) btnChangeImg.addEventListener('click', () => showVisualSearchStep('select'));
+
+    const btnResetCrop = document.getElementById('btn-vs-reset-crop');
+    if (btnResetCrop) btnResetCrop.addEventListener('click', resetCropBox);
+
+    const btnNewSearch = document.getElementById('btn-vs-new-search');
+    if (btnNewSearch) btnNewSearch.addEventListener('click', () => showVisualSearchStep('select'));
+
+    const btnRetryCrop = document.getElementById('btn-vs-retry-crop');
+    if (btnRetryCrop) btnRetryCrop.addEventListener('click', () => showVisualSearchStep('crop'));
+
+    // 7. Results filter chips
+    document.querySelectorAll('.vs-filter-chip[data-vsfilter]').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.vs-filter-chip[data-vsfilter]').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        state.visualSearch.resultFilter = chip.getAttribute('data-vsfilter');
+        applyVisualSearchFilters();
+      });
+    });
+
+    // 8. Settings panel
+    const btnToggleSettings = document.getElementById('btn-vs-settings-toggle');
+    const settingsPanel = document.getElementById('vs-settings-panel');
+    const workerInput = document.getElementById('vs-worker-url-input');
+    const btnTestWorker = document.getElementById('btn-vs-test-worker');
+    const btnSaveWorker = document.getElementById('btn-vs-save-worker');
+    const btnResetWorker = document.getElementById('btn-vs-reset-worker');
+
+    if (btnToggleSettings && settingsPanel) {
+      btnToggleSettings.addEventListener('click', () => {
+        const isHidden = settingsPanel.style.display === 'none';
+        settingsPanel.style.display = isHidden ? 'flex' : 'none';
+        if (isHidden && workerInput) {
+          workerInput.value = state.visualSearch.workerUrl;
+        }
+      });
+    }
+
+    if (btnTestWorker) {
+      btnTestWorker.addEventListener('click', async () => {
+        const url = workerInput.value.trim().replace(/\/$/, '');
+        if (!url) {
+          showToast('Vui lòng nhập URL Cloudflare Worker');
+          return;
+        }
+        btnTestWorker.textContent = 'Đang thử...';
+        btnTestWorker.disabled = true;
+        try {
+          const res = await fetch(`${url}/api/status`);
+          if (res.ok) {
+            const data = await res.json();
+            showToast(`Kết nối Worker thành công! Đã index: ${data.indexed_products} mẫu`);
+            updateEngineBadge('worker');
+          } else {
+            showToast(`Worker phản hồi lỗi HTTP ${res.status}`);
+          }
+        } catch (err) {
+          showToast(`Không thể kết nối đến Worker: ${err.message}`);
+        } finally {
+          btnTestWorker.textContent = 'Kiểm tra';
+          btnTestWorker.disabled = false;
+        }
+      });
+    }
+
+    if (btnSaveWorker) {
+      btnSaveWorker.addEventListener('click', () => {
+        const val = workerInput.value.trim().replace(/\/$/, '');
+        state.visualSearch.workerUrl = val;
+        localStorage.setItem('CTP_WORKER_URL', val);
+        updateEngineBadge(val ? 'worker' : 'client');
+        settingsPanel.style.display = 'none';
+        showToast(val ? 'Đã lưu cấu hình Cloudflare Worker!' : 'Đã chuyển về engine cục bộ!');
+      });
+    }
+
+    if (btnResetWorker) {
+      btnResetWorker.addEventListener('click', () => {
+        workerInput.value = '';
+        state.visualSearch.workerUrl = '';
+        localStorage.removeItem('CTP_WORKER_URL');
+        updateEngineBadge('client');
+        showToast('Đã khôi phục chế độ mặc định (Client Engine)');
+      });
+    }
+
+    // 9. Initialize Interactive Cropper Touch/Mouse Dragging
+    initCropperInteractions();
+
+    // 10. Update initial engine badge
+    updateEngineBadge(state.visualSearch.workerUrl ? 'worker' : 'client');
+  }
+
+  function updateEngineBadge(engine) {
+    state.visualSearch.currentEngine = engine;
+    const badge = document.getElementById('vs-current-engine-badge');
+    const pill = document.getElementById('vs-results-engine-pill');
+    if (engine === 'worker') {
+      if (badge) {
+        badge.textContent = '⚡ Cloudflare Worker Online';
+        badge.classList.add('worker-active');
+      }
+      if (pill) pill.textContent = 'Cloudflare Worker';
+    } else {
+      if (badge) {
+        badge.textContent = '⚡ Client-Side Engine (Local)';
+        badge.classList.remove('worker-active');
+      }
+      if (pill) pill.textContent = 'Client-Side Engine';
+    }
+  }
+
+  window.openVisualSearchModal = function () {
+    const modal = document.getElementById('visual-search-modal');
+    if (!modal) return;
+    modal.classList.add('open');
+    renderSampleGallery();
+
+    // Default to select view if no image is loaded
+    if (!state.visualSearch.imageSrc) {
+      showVisualSearchStep('select');
+      switchVisualSearchTab('upload');
+    }
+  };
+
+  window.closeVisualSearchModal = function () {
+    const modal = document.getElementById('visual-search-modal');
+    if (modal) modal.classList.remove('open');
+    stopCameraStream();
+    const scanOverlay = document.getElementById('vs-scanline-overlay');
+    if (scanOverlay) scanOverlay.style.display = 'none';
+  };
+
+  function showVisualSearchStep(step) {
+    document.querySelectorAll('.vs-step-view').forEach(v => v.classList.remove('active'));
+    const target = document.getElementById(`vs-step-${step}`);
+    if (target) target.classList.add('active');
+
+    if (step !== 'select') {
+      stopCameraStream();
+    }
+  }
+
+  function switchVisualSearchTab(tab) {
+    state.visualSearch.activeTab = tab;
+    document.querySelectorAll('.vs-nav-tab[data-vstab]').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-vstab') === tab);
+    });
+    document.querySelectorAll('.vs-tab-content').forEach(tc => tc.classList.remove('active'));
+    const target = document.getElementById(`vs-tab-${tab}`);
+    if (target) target.classList.add('active');
+
+    if (tab === 'camera') {
+      startCameraStream();
+    } else {
+      stopCameraStream();
+    }
+  }
+
+  // Camera Management
+  async function startCameraStream() {
+    stopCameraStream();
+    const video = document.getElementById('vs-video-feed');
+    if (!video || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      showToast('Thiết bị của bạn không hỗ trợ camera web');
+      return;
+    }
+
+    try {
+      const constraints = {
+        video: {
+          facingMode: state.visualSearch.facingMode,
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      state.visualSearch.stream = stream;
+      video.srcObject = stream;
+    } catch (err) {
+      console.warn('Camera access denied or error:', err);
+      showToast('Không thể mở camera. Vui lòng cho phép quyền truy cập.');
+    }
+  }
+
+  function stopCameraStream() {
+    if (state.visualSearch.stream) {
+      state.visualSearch.stream.getTracks().forEach(t => t.stop());
+      state.visualSearch.stream = null;
+    }
+  }
+
+  function captureLivePhoto() {
+    const video = document.getElementById('vs-video-feed');
+    if (!video || !video.videoWidth) {
+      showToast('Vui lòng đợi camera sẵn sàng');
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    stopCameraStream();
+    loadImageForSearch(dataUrl);
+  }
+
+  // Sample Gallery
+  function renderSampleGallery() {
+    const container = document.getElementById('vs-samples-container');
+    if (!container) return;
+
+    container.innerHTML = state.visualSearch.samples.map((s, idx) => `
+      <div class="vs-sample-card" onclick="selectSampleItem(${idx})">
+        <img class="vs-sample-thumb" src="${s.image}" alt="${s.name}" loading="lazy">
+        <div class="vs-sample-info">
+          <div class="vs-sample-cat">${s.cat}</div>
+          <div class="vs-sample-name">${s.name}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.selectSampleItem = function (index) {
+    const item = state.visualSearch.samples[index];
+    if (!item) return;
+    loadImageForSearch(item.image);
+  };
+
+  function handleSelectedFile(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      showToast('Vui lòng chọn file hình ảnh hợp lệ (JPG, PNG, WebP)');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      loadImageForSearch(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function loadImageForSearch(imgSrc) {
+    state.visualSearch.imageSrc = imgSrc;
+    const cropImg = document.getElementById('vs-crop-img');
+    if (cropImg) {
+      cropImg.onload = () => {
+        showVisualSearchStep('crop');
+        resetCropBox();
+      };
+      cropImg.src = imgSrc;
+    }
+  }
+
+  // Interactive Bounding Box Cropper
+  function resetCropBox() {
+    state.visualSearch.cropBox = { x: 0.1, y: 0.08, width: 0.8, height: 0.84 };
+    updateCropBoxUI();
+  }
+
+  function updateCropBoxUI() {
+    const container = document.getElementById('vs-crop-container');
+    const img = document.getElementById('vs-crop-img');
+    const box = document.getElementById('vs-crop-box');
+    if (!container || !img || !box) return;
+
+    // Get rendered bounds of the image inside container
+    const cRect = container.getBoundingClientRect();
+    const iRect = img.getBoundingClientRect();
+
+    const imgLeft = iRect.left - cRect.left;
+    const imgTop = iRect.top - cRect.top;
+    const imgW = iRect.width;
+    const imgH = iRect.height;
+
+    const cb = state.visualSearch.cropBox;
+    const left = imgLeft + cb.x * imgW;
+    const top = imgTop + cb.y * imgH;
+    const width = cb.width * imgW;
+    const height = cb.height * imgH;
+
+    box.style.left = `${left}px`;
+    box.style.top = `${top}px`;
+    box.style.width = `${width}px`;
+    box.style.height = `${height}px`;
+  }
+
+  function initCropperInteractions() {
+    const box = document.getElementById('vs-crop-box');
+    const container = document.getElementById('vs-crop-container');
+    const img = document.getElementById('vs-crop-img');
+    if (!box || !container || !img) return;
+
+    let isDragging = false;
+    let dragMode = 'move'; // 'move', 'tl', 'tr', 'bl', 'br'
+    let startX = 0, startY = 0;
+    let startBox = null;
+
+    function onPointerDown(e) {
+      const handle = e.target.getAttribute('data-handle');
+      if (handle) {
+        dragMode = handle;
+      } else if (e.target === box || box.contains(e.target)) {
+        dragMode = 'move';
+      } else {
+        return;
+      }
+
+      isDragging = true;
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      startX = clientX;
+      startY = clientY;
+      startBox = { ...state.visualSearch.cropBox };
+      e.preventDefault();
+    }
+
+    function onPointerMove(e) {
+      if (!isDragging) return;
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+      const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+      const dx = clientX - startX;
+      const dy = clientY - startY;
+
+      const iRect = img.getBoundingClientRect();
+      const normDx = dx / (iRect.width || 1);
+      const normDy = dy / (iRect.height || 1);
+
+      let { x, y, width, height } = startBox;
+
+      if (dragMode === 'move') {
+        x = Math.max(0, Math.min(1 - width, x + normDx));
+        y = Math.max(0, Math.min(1 - height, y + normDy));
+      } else if (dragMode === 'tl') {
+        const newX = Math.max(0, Math.min(x + width - 0.15, x + normDx));
+        const newY = Math.max(0, Math.min(y + height - 0.15, y + normDy));
+        width += (x - newX);
+        height += (y - newY);
+        x = newX;
+        y = newY;
+      } else if (dragMode === 'tr') {
+        const newY = Math.max(0, Math.min(y + height - 0.15, y + normDy));
+        width = Math.max(0.15, Math.min(1 - x, width + normDx));
+        height += (y - newY);
+        y = newY;
+      } else if (dragMode === 'bl') {
+        const newX = Math.max(0, Math.min(x + width - 0.15, x + normDx));
+        width += (x - newX);
+        height = Math.max(0.15, Math.min(1 - y, height + normDy));
+        x = newX;
+      } else if (dragMode === 'br') {
+        width = Math.max(0.15, Math.min(1 - x, width + normDx));
+        height = Math.max(0.15, Math.min(1 - y, height + normDy));
+      }
+
+      state.visualSearch.cropBox = { x, y, width, height };
+      updateCropBoxUI();
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+    }
+
+    box.addEventListener('mousedown', onPointerDown);
+    window.addEventListener('mousemove', onPointerMove);
+    window.addEventListener('mouseup', onPointerUp);
+
+    box.addEventListener('touchstart', onPointerDown, { passive: false });
+    window.addEventListener('touchmove', onPointerMove, { passive: false });
+    window.addEventListener('touchend', onPointerUp);
+
+    window.addEventListener('resize', () => {
+      if (document.getElementById('vs-step-crop').classList.contains('active')) {
+        updateCropBoxUI();
+      }
+    });
+  }
+
+  // Feature Extractor via Canvas (Exact mirror of Python extractor)
+  function extractVectorFromCroppedImage(img, cropBox) {
+    const targetW = 120;
+    const targetH = 160;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW;
+    canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+
+    // Natural image coordinates
+    const natW = img.naturalWidth || img.width;
+    const natH = img.naturalHeight || img.height;
+
+    const sx = Math.floor(cropBox.x * natW);
+    const sy = Math.floor(cropBox.y * natH);
+    const sw = Math.floor(cropBox.width * natW);
+    const sh = Math.floor(cropBox.height * natH);
+
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+    const imgData = ctx.getImageData(0, 0, targetW, targetH);
+    const data = imgData.data;
+
+    const totalPixels = targetW * targetH;
+    const hArr = new Float32Array(totalPixels);
+    const sArr = new Float32Array(totalPixels);
+    const vArr = new Float32Array(totalPixels);
+    const gray = new Float32Array(totalPixels);
+
+    for (let i = 0; i < totalPixels; i++) {
+      const idx = i * 4;
+      const r = data[idx] / 255.0;
+      const g = data[idx + 1] / 255.0;
+      const b = data[idx + 2] / 255.0;
+
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const delta = max - min;
+      vArr[i] = max;
+      sArr[i] = max === 0 ? 0 : delta / (max + 1e-7);
+
+      if (delta < 1e-5) {
+        hArr[i] = 0;
+      } else if (max === r) {
+        hArr[i] = ((60 * ((g - b) / delta)) + 360) % 360;
+      } else if (max === g) {
+        hArr[i] = ((60 * ((b - r) / delta)) + 120) % 360;
+      } else {
+        hArr[i] = ((60 * ((r - g) / delta)) + 240) % 360;
+      }
+
+      gray[i] = 0.299 * r + 0.587 * g + 0.114 * b;
+    }
+
+    const gradMag = new Float32Array(totalPixels);
+    const gradAng = new Float32Array(totalPixels);
+    for (let y = 1; y < targetH - 1; y++) {
+      for (let x = 1; x < targetW - 1; x++) {
+        const idx = y * targetW + x;
+        const gx = gray[idx + 1] - gray[idx - 1];
+        const gy = gray[idx + targetW] - gray[idx - targetW];
+        gradMag[idx] = Math.sqrt(gx * gx + gy * gy);
+        gradAng[idx] = ((Math.atan2(gy, gx) * 180 / Math.PI) + 180) % 360;
+      }
+    }
+
+    const vectorParts = [];
+
+    // 3 Vùng dọc: 0-30%, 30-65%, 65-100%
+    const zones = [
+      [0, Math.floor(targetH * 0.30)],
+      [Math.floor(targetH * 0.30), Math.floor(targetH * 0.65)],
+      [Math.floor(targetH * 0.65), targetH]
+    ];
+
+    for (const [yStart, yEnd] of zones) {
+      const hHist = new Float32Array(12);
+      const sHist = new Float32Array(6);
+      const vHist = new Float32Array(6);
+      const edgeHist = new Float32Array(8);
+
+      let hSum = 0, sSum = 0, vSum = 0, eSum = 0;
+
+      for (let y = yStart; y < yEnd; y++) {
+        for (let x = 0; x < targetW; x++) {
+          const idx = y * targetW + x;
+          const h = hArr[idx], s = sArr[idx], v = vArr[idx];
+          const mag = gradMag[idx], ang = gradAng[idx];
+
+          const hBin = Math.min(11, Math.floor((h / 360) * 12));
+          const w = s * v;
+          hHist[hBin] += w;
+          hSum += w;
+
+          const sBin = Math.min(5, Math.floor(s * 6));
+          sHist[sBin] += 1;
+          sSum += 1;
+
+          const vBin = Math.min(5, Math.floor(v * 6));
+          vHist[vBin] += 1;
+          vSum += 1;
+
+          const eBin = Math.min(7, Math.floor((ang / 360) * 8));
+          edgeHist[eBin] += mag;
+          eSum += mag;
+        }
+      }
+
+      for (let i = 0; i < 12; i++) vectorParts.push(hHist[i] / (hSum + 1e-7));
+      for (let i = 0; i < 6; i++) vectorParts.push(sHist[i] / (sSum + 1e-7));
+      for (let i = 0; i < 6; i++) vectorParts.push(vHist[i] / (vSum + 1e-7));
+      for (let i = 0; i < 8; i++) vectorParts.push(edgeHist[i] / (eSum + 1e-7));
+    }
+
+    // Global
+    const ghHist = new Float32Array(16);
+    const gsHist = new Float32Array(8);
+    const gvHist = new Float32Array(8);
+    let ghSum = 0, gsSum = 0, gvSum = 0;
+
+    for (let i = 0; i < totalPixels; i++) {
+      const h = hArr[i], s = sArr[i], v = vArr[i];
+      const w = s * v;
+      const hBin = Math.min(15, Math.floor((h / 360) * 16));
+      ghHist[hBin] += w;
+      ghSum += w;
+
+      const sBin = Math.min(7, Math.floor(s * 8));
+      gsHist[sBin] += 1;
+      gsSum += 1;
+
+      const vBin = Math.min(7, Math.floor(v * 8));
+      gvHist[vBin] += 1;
+      gvSum += 1;
+    }
+
+    for (let i = 0; i < 16; i++) vectorParts.push(ghHist[i] / (ghSum + 1e-7));
+    for (let i = 0; i < 8; i++) vectorParts.push(gsHist[i] / (gsSum + 1e-7));
+    for (let i = 0; i < 8; i++) vectorParts.push(gvHist[i] / (gvSum + 1e-7));
+
+    let sumSq = 0;
+    for (let i = 0; i < vectorParts.length; i++) {
+      sumSq += vectorParts[i] * vectorParts[i];
+    }
+    const norm = Math.sqrt(sumSq) + 1e-7;
+    for (let i = 0; i < vectorParts.length; i++) {
+      vectorParts[i] = vectorParts[i] / norm;
+    }
+
+    return { vector: vectorParts, thumbnail: canvas.toDataURL('image/jpeg', 0.85) };
+  }
+
+  // Execute Visual Search
+  async function executeVisualSearch() {
+    const img = document.getElementById('vs-crop-img');
+    const scanOverlay = document.getElementById('vs-scanline-overlay');
+    if (!img) return;
+
+    if (scanOverlay) scanOverlay.style.display = 'flex';
+
+    // Allow scanning animation to run for at least 700ms for futuristic Shopee visual experience
+    const scanPromise = new Promise(resolve => setTimeout(resolve, 700));
+
+    try {
+      const { vector, thumbnail } = extractVectorFromCroppedImage(img, state.visualSearch.cropBox);
+      state.visualSearch.queryVector = vector;
+
+      // Update query thumbnail in results
+      const thumbEl = document.getElementById('vs-query-thumb');
+      if (thumbEl) thumbEl.src = thumbnail;
+
+      let results = [];
+      let engineUsed = 'client';
+
+      // Attempt Cloudflare Worker if URL configured
+      if (state.visualSearch.workerUrl) {
+        try {
+          const res = await fetch(`${state.visualSearch.workerUrl}/api/search`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ vector: vector, topK: 40 })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            results = data.results || [];
+            engineUsed = 'worker';
+          } else {
+            console.warn('Worker returned non-200, fallback to client');
+          }
+        } catch (workerErr) {
+          console.warn('Worker fetch failed, fallback to client:', workerErr);
+        }
+      }
+
+      // Fallback to local vector search (GitHub Pages Native)
+      if (results.length === 0) {
+        results = searchCatalogLocally(vector, 40);
+        engineUsed = 'client';
+      }
+
+      await scanPromise;
+
+      state.visualSearch.results = results;
+      state.visualSearch.filteredResults = results;
+      state.visualSearch.resultFilter = 'all';
+
+      updateEngineBadge(engineUsed);
+      if (scanOverlay) scanOverlay.style.display = 'none';
+
+      showVisualSearchStep('results');
+      applyVisualSearchFilters();
+
+    } catch (err) {
+      console.error('Visual Search Error:', err);
+      if (scanOverlay) scanOverlay.style.display = 'none';
+      showToast(`Lỗi tìm kiếm: ${err.message}`);
+    }
+  }
+
+  function searchCatalogLocally(queryVector, topK = 40) {
+    const catalog = window.VISUAL_INDEX || [];
+    if (catalog.length === 0) {
+      console.warn('window.VISUAL_INDEX is empty or not loaded');
+      return [];
+    }
+
+    const matches = [];
+    const len = queryVector.length;
+
+    for (let i = 0; i < catalog.length; i++) {
+      const item = catalog[i];
+      const v = item.vector;
+      let dot = 0;
+      for (let j = 0; j < len; j++) {
+        dot += queryVector[j] * v[j];
+      }
+      const percent = Math.max(0, Math.min(100, Math.round(dot * 100)));
+      matches.push({
+        ...item,
+        similarity: dot,
+        similarity_percent: percent
+      });
+    }
+
+    matches.sort((a, b) => b.similarity - a.similarity);
+    return matches.slice(0, topK);
+  }
+
+  function applyVisualSearchFilters() {
+    const filter = state.visualSearch.resultFilter;
+    let list = state.visualSearch.results;
+
+    if (filter !== 'all') {
+      list = list.filter(p => p.file_id === filter);
+    }
+
+    state.visualSearch.filteredResults = list;
+    renderVisualSearchResults();
+  }
+
+  function renderVisualSearchResults() {
+    const grid = document.getElementById('vs-results-grid');
+    const empty = document.getElementById('vs-empty-state');
+    const matchCount = document.getElementById('vs-match-count');
+    if (!grid) return;
+
+    const list = state.visualSearch.filteredResults;
+    if (matchCount) matchCount.textContent = `${list.length} mẫu khớp`;
+
+    if (list.length === 0) {
+      grid.innerHTML = '';
+      if (empty) empty.style.display = 'flex';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+    grid.innerHTML = list.map(renderProductCard).join('');
+  }
+
+  // Lightbox and toast utilities
   window.openLightbox = function (imgSrc, caption) {
     const modal = document.getElementById('lightbox-modal');
     const img = document.getElementById('lightbox-img');
@@ -1209,9 +1982,6 @@
     if (modal) modal.classList.remove('open');
   };
 
-  // ===================================================
-  // TOAST UTILITY
-  // ===================================================
   function showToast(msg) {
     const toast = document.getElementById('toast');
     if (!toast) return;
@@ -1229,3 +1999,4 @@
   }
 
 })();
+

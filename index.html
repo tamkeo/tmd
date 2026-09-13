@@ -24,6 +24,9 @@
           <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
         </button>
+        <button id="btn-top-visual-search" class="icon-btn vs-top-trigger" title="Tìm kiếm bằng hình ảnh (Shopee Lens)" aria-label="Tìm kiếm ảnh">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </button>
         <button id="btn-quick-search" class="icon-btn" title="Tìm kiếm nhanh" aria-label="Tìm kiếm">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </button>
@@ -49,12 +52,18 @@
       </div>
 
       <!-- SEARCH INPUT HERO -->
-      <div class="dashboard-search-card" onclick="switchTab('search')">
-        <div class="search-input-mock">
+      <div class="dashboard-search-card">
+        <div class="search-input-mock" onclick="switchTab('search')">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Nhập mã sản phẩm, barcode, tên đầm...</span>
         </div>
-        <button class="search-action-btn">Tra cứu</button>
+        <div class="dash-search-actions">
+          <button id="btn-dash-visual-search" class="dash-camera-btn" title="Tìm kiếm bằng hình ảnh (Shopee Lens)">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>Tìm bằng ảnh</span>
+          </button>
+          <button class="search-action-btn" onclick="switchTab('search')">Tra cứu</button>
+        </div>
       </div>
 
       <!-- KEY METRICS STATS -->
@@ -175,6 +184,9 @@
         <div class="search-bar-wrap">
           <svg class="search-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="search" id="search-input" class="search-input" placeholder="Tìm Mã hàng, Barcode, Tên sản phẩm, BST..." autocomplete="off">
+          <button id="btn-camera-search" class="camera-btn-in-search" title="Tìm kiếm bằng hình ảnh (Shopee Lens)" aria-label="Tìm bằng hình ảnh">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
           <button id="btn-clear-search" class="clear-icon" style="display: none;">&times;</button>
         </div>
 
@@ -475,11 +487,217 @@
     <div id="lightbox-caption" class="lightbox-caption"></div>
   </div>
 
+  <!-- VISUAL SEARCH MODAL (SHOPEE STYLE LENS) -->
+  <div id="visual-search-modal" class="modal-backdrop">
+    <div class="visual-search-dialog">
+      <div class="modal-drag-bar"></div>
+      
+      <!-- Modal Header -->
+      <div class="modal-header vs-header">
+        <div class="vs-title-wrap">
+          <div class="vs-badge">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            SHOPEE AI LENS
+          </div>
+          <h3 class="vs-title">Tìm Kiếm Bằng Hình Ảnh</h3>
+        </div>
+        <div class="vs-header-actions">
+          <button id="btn-vs-settings-toggle" class="icon-btn-sm" title="Cài đặt Cloudflare Worker" aria-label="Cài đặt Worker">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+          <button id="btn-close-vs-modal" class="btn-close-modal">&times;</button>
+        </div>
+      </div>
+
+      <!-- Settings Dropdown Drawer (Cloudflare Worker URL) -->
+      <div id="vs-settings-panel" class="vs-settings-panel" style="display: none;">
+        <div class="vs-settings-header">
+          <h4>Cấu Hình Cloudflare Worker Backend</h4>
+          <span class="vs-badge-engine" id="vs-current-engine-badge">⚡ Client-Side Engine</span>
+        </div>
+        <p class="vs-settings-desc">
+          Nhập đường dẫn Worker (ví dụ: <code>https://ctp-visual-search.your-subdomain.workers.dev</code>). Nếu để trống, hệ thống sẽ tự động dùng engine cục bộ siêu tốc của GitHub Pages.
+        </p>
+        <div class="vs-settings-input-row">
+          <input type="url" id="vs-worker-url-input" class="vs-settings-input" placeholder="https://ctp-visual-search.xxx.workers.dev" autocomplete="off">
+          <button id="btn-vs-test-worker" class="btn-sm btn-outline">Kiểm tra</button>
+        </div>
+        <div class="vs-settings-footer">
+          <button id="btn-vs-reset-worker" class="btn-text-sm">Đặt lại mặc định</button>
+          <button id="btn-vs-save-worker" class="btn-sm btn-gold">Lưu cấu hình</button>
+        </div>
+      </div>
+
+      <!-- Main Body Container -->
+      <div class="modal-body vs-modal-body">
+        
+        <!-- STEP 1: SELECTION TABS -->
+        <div id="vs-step-select" class="vs-step-view active">
+          <!-- Selection Source Tabs -->
+          <div class="vs-nav-tabs">
+            <button class="vs-nav-tab active" data-vstab="upload">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Tải ảnh lên
+            </button>
+            <button class="vs-nav-tab" data-vstab="camera">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              Chụp ảnh
+            </button>
+            <button class="vs-nav-tab" data-vstab="samples">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              Mẫu thử nhanh
+            </button>
+          </div>
+
+          <!-- TAB 1: UPLOAD DROPZONE -->
+          <div id="vs-tab-upload" class="vs-tab-content active">
+            <div id="vs-dropzone" class="vs-dropzone">
+              <input type="file" id="vs-file-input" accept="image/jpeg,image/png,image/webp,image/jpg" style="display: none;">
+              <div class="vs-dropzone-icon">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242M12 12v9m-4-4 4-4 4 4"/>
+                </svg>
+              </div>
+              <h4 class="vs-dropzone-title">Kéo & thả ảnh mẫu váy vào đây</h4>
+              <p class="vs-dropzone-sub">hoặc <span class="vs-dropzone-browse">Duyệt ảnh từ thiết bị</span></p>
+              <div class="vs-paste-hint">
+                <kbd>Ctrl</kbd> + <kbd>V</kbd> để dán ảnh chụp màn hình nhanh
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: LIVE CAMERA -->
+          <div id="vs-tab-camera" class="vs-tab-content">
+            <div class="vs-camera-viewport">
+              <video id="vs-video-feed" playsinline autoplay muted></video>
+              <div class="vs-camera-overlay">
+                <div class="vs-camera-frame">
+                  <span class="vs-camera-corner top-left"></span>
+                  <span class="vs-camera-corner top-right"></span>
+                  <span class="vs-camera-corner bottom-left"></span>
+                  <span class="vs-camera-corner bottom-right"></span>
+                  <div class="vs-camera-hint">Căn chỉnh mẫu váy vào khung</div>
+                </div>
+              </div>
+            </div>
+            <div class="vs-camera-controls">
+              <button id="btn-vs-switch-camera" class="btn-icon-circle" title="Đổi camera trước/sau">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0-4.418-3.582-8-8-8s-8 3.582-8 8c0 2.21 1.005 4.21 2.607 5.607L4 18h6v-6l-2.121 2.121C6.72 13.06 6 11.62 6 10c0-3.314 2.686-6 6-6s6 2.686 6 6c0 1.62-.72 3.06-1.879 4.121L14 12v6h6l-2.607-2.393C18.995 14.21 20 12.21 20 10z"/></svg>
+              </button>
+              <button id="btn-vs-capture-photo" class="btn-camera-shutter" title="Chụp ảnh">
+                <div class="shutter-inner"></div>
+              </button>
+              <div style="width: 44px;"></div>
+            </div>
+          </div>
+
+          <!-- TAB 3: SAMPLE GALLERY -->
+          <div id="vs-tab-samples" class="vs-tab-content">
+            <p class="vs-samples-intro">Bấm vào mẫu váy bên dưới để kiểm tra nhận diện trực tiếp:</p>
+            <div class="vs-samples-grid" id="vs-samples-container">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: INTERACTIVE CROPPER & SCANNING -->
+        <div id="vs-step-crop" class="vs-step-view">
+          <div class="vs-crop-container" id="vs-crop-container">
+            <img id="vs-crop-img" src="" alt="Query image">
+            <!-- Crop Box Overlay -->
+            <div id="vs-crop-box" class="vs-crop-box">
+              <div class="vs-crop-handle handle-tl" data-handle="tl"></div>
+              <div class="vs-crop-handle handle-tr" data-handle="tr"></div>
+              <div class="vs-crop-handle handle-bl" data-handle="bl"></div>
+              <div class="vs-crop-handle handle-br" data-handle="br"></div>
+              <div class="vs-crop-grid-line h-1"></div>
+              <div class="vs-crop-grid-line h-2"></div>
+              <div class="vs-crop-grid-line v-1"></div>
+              <div class="vs-crop-grid-line v-2"></div>
+            </div>
+
+            <!-- Laser Scanline Animation Overlay (when searching) -->
+            <div id="vs-scanline-overlay" class="vs-scanline-overlay" style="display: none;">
+              <div class="vs-scan-beam"></div>
+              <div class="vs-scan-radar"></div>
+              <div class="vs-scan-status">
+                <div class="vs-spinner"></div>
+                <span>Đang quét phom dáng & hoa văn váy...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="vs-crop-instructions">
+            Kéo các góc khung vàng để chọn đúng vùng váy/áo cần tìm (giống Shopee Lens)
+          </div>
+
+          <div class="vs-crop-actions">
+            <button id="btn-vs-change-img" class="btn-modal-secondary">
+              ✕ Chọn ảnh khác
+            </button>
+            <button id="btn-vs-reset-crop" class="btn-modal-secondary">
+              ↺ Đặt lại khung
+            </button>
+            <button id="btn-vs-execute-search" class="btn-modal-primary btn-gold">
+              🔍 Bắt đầu tìm kiếm
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3: SEARCH RESULTS -->
+        <div id="vs-step-results" class="vs-step-view">
+          <!-- Results Top Bar -->
+          <div class="vs-results-bar">
+            <div class="vs-query-summary">
+              <div class="vs-query-thumb-wrap">
+                <img id="vs-query-thumb" src="" alt="Query">
+                <span class="vs-query-badge">Ảnh tìm kiếm</span>
+              </div>
+              <div class="vs-query-details">
+                <h4 id="vs-results-title">Sản Phẩm Tương Đồng Nhất</h4>
+                <div class="vs-query-meta">
+                  <span id="vs-match-count">0 mẫu khớp</span>
+                  <span class="vs-engine-pill" id="vs-results-engine-pill">Client-Side Engine</span>
+                </div>
+              </div>
+            </div>
+            <button id="btn-vs-new-search" class="btn-sm btn-outline">
+              📷 Đổi ảnh khác
+            </button>
+          </div>
+
+          <!-- Quick Category / Warehouse Filter Chips for Results -->
+          <div class="vs-result-filter-scroll" id="vs-result-filter-scroll">
+            <button class="vs-filter-chip active" data-vsfilter="all">Tất cả</button>
+            <button class="vs-filter-chip" data-vsfilter="kho_bridal">Kho Bridal 2026</button>
+            <button class="vs-filter-chip" data-vsfilter="kho_rin">Kho Trưng Bày Rin</button>
+            <button class="vs-filter-chip" data-vsfilter="kho_moi">Kho Mới 30.06.25</button>
+          </div>
+
+          <!-- Matching Products Grid -->
+          <div class="product-cards-grid vs-products-grid" id="vs-results-grid">
+            <!-- Dynamically populated with similarity cards -->
+          </div>
+
+          <!-- Empty State -->
+          <div id="vs-empty-state" class="empty-state" style="display: none;">
+            <div class="empty-icon">👗</div>
+            <h3>Không tìm thấy sản phẩm có độ tương đồng phù hợp</h3>
+            <p>Hãy thử kéo khung crop gọn hơn quanh phần thân áo/váy hoặc chọn góc chụp rõ ánh sáng hơn.</p>
+            <button class="btn-primary" id="btn-vs-retry-crop">Căn chỉnh lại khung ảnh</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST NOTIFICATION -->
   <div id="toast" class="toast">Đã sao chép vào bộ nhớ tạm!</div>
 
   <!-- LOAD DATA SCRIPT & APPLICATION SCRIPT -->
   <script src="data/bundle_data.js"></script>
+  <script src="data/visual_index.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
