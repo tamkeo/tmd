@@ -25,6 +25,10 @@
           <span class="sale-chip-text">SALE 20/10</span>
           <span class="sale-chip-dot"></span>
         </button>
+        <button id="btn-top-bridalweb" class="top-sale-chip top-archive-chip" onclick="switchTab('bridalweb')" title="Xem Bridal Archive Sale Website">
+          <span class="sale-badge-icon">🌐</span>
+          <span class="sale-chip-text">BRIDAL WEB</span>
+        </button>
         <button id="btn-theme-toggle" class="icon-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">
           <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -454,6 +458,42 @@
       </div>
     </section>
 
+    <!-- VIEW: BRIDAL ARCHIVE SALE WEBSITE (EMBEDDED) -->
+    <section id="view-bridalweb" class="app-view">
+      <div class="archive-web-header">
+        <div class="archive-web-title-wrap">
+          <span class="view-subtitle">Official Showcase Live</span>
+          <h2 class="view-title">Bridal Archive Sale Website</h2>
+          <span class="archive-web-url">bridalarchivesale-ctp.netlify.app</span>
+        </div>
+        <div class="archive-web-actions">
+          <button class="btn-archive-tool" onclick="reloadArchiveIframe()" title="Tải lại trang web">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            <span>Tải lại</span>
+          </button>
+          <a href="https://bridalarchivesale-ctp.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn-archive-tool btn-primary-tool" title="Mở trang web trong tab trình duyệt mới">
+            <span>Mở tab mới</span>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="archive-iframe-wrapper">
+        <div class="archive-iframe-loader" id="archive-iframe-loader">
+          <div class="archive-spinner"></div>
+          <span>Đang kết nối Bridal Archive Sale Website...</span>
+        </div>
+        <iframe 
+          id="archive-iframe" 
+          src="https://bridalarchivesale-ctp.netlify.app/" 
+          title="Bridal Archive Sale - Chung Thanh Phong"
+          onload="hideArchiveLoader()"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen>
+        </iframe>
+      </div>
+    </section>
+
   </main>
 
   <!-- FLOATING SELECTION BAR (BRIDAL ARCHIVE LOOKBOOK STYLE) -->
@@ -484,6 +524,12 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       </div>
       <span class="nav-label">Bộ Sưu Tập</span>
+    </button>
+    <button class="nav-item" data-target="bridalweb">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      </div>
+      <span class="nav-label">Bridal Web</span>
     </button>
     <button class="nav-item" data-target="search">
       <div class="nav-icon">

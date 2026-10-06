@@ -93,9 +93,9 @@
     await loadAppData();
     renderAllViews();
 
-    // Support URL Hash Deep-linking (e.g. #sale2010)
+    // Support URL Hash Deep-linking (e.g. #sale2010, #bridalweb)
     const hash = window.location.hash.replace('#', '');
-    if (hash && ['sale2010', 'collections', 'search', 'inventory', 'picklist'].includes(hash)) {
+    if (hash && ['sale2010', 'collections', 'search', 'inventory', 'picklist', 'bridalweb'].includes(hash)) {
       switchTab(hash);
     } else {
       switchTab('sale2010');
@@ -2593,6 +2593,31 @@
 
     applySaleFilters();
     showToast('Đã đặt lại bộ lọc Sale 20/10');
+  };
+
+  // ==========================================
+  // BRIDAL ARCHIVE LIVE WEBSITE TAB LOGIC
+  // ==========================================
+  window.reloadArchiveIframe = function () {
+    const iframe = document.getElementById('archive-iframe');
+    const loader = document.getElementById('archive-iframe-loader');
+    if (loader) {
+      loader.style.display = 'flex';
+      loader.style.opacity = '1';
+    }
+    if (iframe) {
+      iframe.src = 'https://bridalarchivesale-ctp.netlify.app/?t=' + Date.now();
+    }
+  };
+
+  window.hideArchiveLoader = function () {
+    const loader = document.getElementById('archive-iframe-loader');
+    if (loader) {
+      loader.style.opacity = '0';
+      setTimeout(() => {
+        loader.style.display = 'none';
+      }, 300);
+    }
   };
 
 })();

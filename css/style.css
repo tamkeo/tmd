@@ -2757,4 +2757,144 @@ h1, h2, h3, h4, h5 {
   }
 }
 
+/* ===================================================
+   BRIDAL ARCHIVE SALE WEBSITE EMBED TAB
+   =================================================== */
+.top-archive-chip {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--fg) !important;
+}
+.top-archive-chip:hover {
+  border-color: var(--gold) !important;
+  color: var(--gold) !important;
+}
+
+.archive-web-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 18px 24px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.archive-web-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.archive-web-url {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: .16em;
+  color: var(--gold);
+  text-transform: lowercase;
+}
+
+.archive-web-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-archive-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+
+.btn-archive-tool:hover {
+  border-color: var(--fg);
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+}
+
+.btn-archive-tool.btn-primary-tool {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.btn-archive-tool.btn-primary-tool:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.archive-iframe-wrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 220px);
+  min-height: 560px;
+  background: #fff;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+#archive-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+.archive-iframe-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--bg);
+  z-index: 5;
+  transition: opacity .3s ease;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.archive-spinner {
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--line);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .archive-web-header {
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .archive-iframe-wrapper {
+    height: calc(100vh - 160px);
+    min-height: 480px;
+  }
+  .btn-archive-tool {
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+}
+
 
