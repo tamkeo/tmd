@@ -13,7 +13,7 @@
     overview: {},
     metadata: {},
     picklist: JSON.parse(localStorage.getItem('CTP_PICKLIST') || '[]'),
-    activeTab: 'dashboard',
+    activeTab: 'sale2010',
     search: {
       query: '',
       quickFilter: 'all',
@@ -37,7 +37,24 @@
     },
     collectionsFilter: {
       file: 'all',
-      category: 'all'
+      category: 'all',
+      activeCollection: null,
+      priceFilter: 'all',
+      sizeFilter: 'all',
+      stockFilter: 'all',
+      sort: 'default'
+    },
+    sale2010: {
+      products: [],
+      filteredProducts: [],
+      query: '',
+      groupFilter: 'all',
+      priceFilter: 'all',
+      locationFilter: 'all',
+      sizeFilter: 'all',
+      sort: 'default',
+      page: 1,
+      pageSize: 24
     },
     visualSearch: {
       workerUrl: localStorage.getItem('CTP_WORKER_URL') || '',
@@ -63,6 +80,8 @@
     theme: localStorage.getItem('CTP_THEME') || 'light'
   };
 
+  window.appState = state;
+
   // INITIALIZATION
   document.addEventListener('DOMContentLoaded', initApp);
 
@@ -73,6 +92,14 @@
     initVisualSearch();
     await loadAppData();
     renderAllViews();
+
+    // Support URL Hash Deep-linking (e.g. #sale2010)
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['sale2010', 'collections', 'search', 'inventory', 'picklist'].includes(hash)) {
+      switchTab(hash);
+    } else {
+      switchTab('sale2010');
+    }
   }
 
   // THEME MANAGEMENT
@@ -120,12 +147,25 @@
         console.error('Error fetching data files:', err);
       }
     }
+
+    // Load Sale 20/10 data
+    if (window.SALE_20_10_DATA) {
+      state.sale2010.products = window.SALE_20_10_DATA;
+    } else {
+      try {
+        const saleRes = await fetch('data/sale_20_10.json');
+        state.sale2010.products = await saleRes.json();
+      } catch (err) {
+        console.warn('Could not load sale_20_10.json:', err);
+      }
+    }
+
     updatePicklistBadges();
   }
 
   // RENDER ALL VIEWS
   function renderAllViews() {
-    renderDashboard();
+    initSale2010();
     renderCollections();
     initSearchFilters();
     applySearchFilters();
@@ -373,6 +413,128 @@
         document.getElementById('overview-modal').classList.remove('open');
       });
     }
+
+    // ==========================================
+    // SALE 20/10 EVENT LISTENERS
+    // ==========================================
+    const saleSearchInput = document.getElementById('sale-search-input');
+    const clearSaleSearchBtn = document.getElementById('btn-clear-sale-search');
+    if (saleSearchInput) {
+      saleSearchInput.addEventListener('input', (e) => {
+        state.sale2010.query = e.target.value.trim();
+        if (clearSaleSearchBtn) clearSaleSearchBtn.style.display = state.sale2010.query ? 'block' : 'none';
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    }
+    if (clearSaleSearchBtn) {
+      clearSaleSearchBtn.addEventListener('click', () => {
+        if (saleSearchInput) saleSearchInput.value = '';
+        state.sale2010.query = '';
+        clearSaleSearchBtn.style.display = 'none';
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    }
+
+    // Group tabs
+    document.querySelectorAll('#sale-group-tabs .sale-grp-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#sale-group-tabs .sale-grp-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.sale2010.groupFilter = btn.getAttribute('data-group');
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    });
+
+    // Price chips
+    document.querySelectorAll('#sale-price-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#sale-price-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.sale2010.priceFilter = btn.getAttribute('data-price');
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    });
+
+    // Size chips
+    document.querySelectorAll('#sale-size-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#sale-size-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.sale2010.sizeFilter = btn.getAttribute('data-size');
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    });
+
+    // Location select
+    const saleLocSelect = document.getElementById('sale-location-select');
+    if (saleLocSelect) {
+      saleLocSelect.addEventListener('change', (e) => {
+        state.sale2010.locationFilter = e.target.value;
+        state.sale2010.page = 1;
+        applySaleFilters();
+      });
+    }
+
+    // Sort select
+    const saleSortSelect = document.getElementById('sale-sort-select');
+    if (saleSortSelect) {
+      saleSortSelect.addEventListener('change', (e) => {
+        state.sale2010.sort = e.target.value;
+        applySaleFilters();
+      });
+    }
+
+    // Load more
+    const btnSaleLoadMore = document.getElementById('btn-sale-load-more');
+    if (btnSaleLoadMore) {
+      btnSaleLoadMore.addEventListener('click', () => {
+        state.sale2010.page++;
+        renderSaleResults(false);
+      });
+    }
+
+    // ==========================================
+    // COLLECTION DETAIL QUICK FILTERS (KHOẢNG GIÁ, SIZE, TỒN KHO, SORT)
+    // ==========================================
+    document.querySelectorAll('#col-price-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#col-price-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.collectionsFilter.priceFilter = btn.getAttribute('data-colprice');
+        applyColProductFilters();
+      });
+    });
+
+    document.querySelectorAll('#col-size-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#col-size-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.collectionsFilter.sizeFilter = btn.getAttribute('data-colsize');
+        applyColProductFilters();
+      });
+    });
+
+    document.querySelectorAll('#col-stock-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#col-stock-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.collectionsFilter.stockFilter = btn.getAttribute('data-colstock');
+        applyColProductFilters();
+      });
+    });
+
+    const colSortSelect = document.getElementById('col-sort-select');
+    if (colSortSelect) {
+      colSortSelect.addEventListener('change', (e) => {
+        state.collectionsFilter.sort = e.target.value;
+        applyColProductFilters();
+      });
+    }
   }
 
   function setupPillSelector(containerId, onChange) {
@@ -547,30 +709,11 @@
   };
 
   window.filterByCollection = function (collectionName) {
-    state.search.collectionFilter = collectionName;
-    state.search.quickFilter = 'all';
-    state.search.fileFilter = 'all';
-    state.search.query = '';
-    state.search.page = 1;
-
-    const searchInput = document.getElementById('search-input');
-    if (searchInput) searchInput.value = '';
-    const clearBtn = document.getElementById('btn-clear-search');
-    if (clearBtn) clearBtn.style.display = 'none';
-
-    document.querySelectorAll('.quick-filter-btn[data-filter]').forEach(b => {
-      if (b.getAttribute('data-filter') === 'all') b.classList.add('active');
-      else b.classList.remove('active');
-    });
-
-    renderModalCollections();
-
-    switchTab('search');
-    applySearchFilters();
+    openCollectionDetail(collectionName);
   };
 
   // ===================================================
-  // VIEW 2: COLLECTIONS LOGIC
+  // VIEW 2: COLLECTIONS LOGIC (KÈM BỘ LỌC KHOẢNG GIÁ CHỌN NHANH)
   // ===================================================
   function renderCollections() {
     // Categories bar
@@ -649,7 +792,7 @@
       }
 
       return `
-        <div class="collection-card" onclick="filterByCollection('${col.collection}')">
+        <div class="collection-card" onclick="openCollectionDetail('${col.collection}')">
           ${mediaHtml}
           <div class="col-card-body">
             <div>
@@ -664,6 +807,147 @@
         </div>
       `;
     }).join('');
+  }
+
+  // CHI TIẾT BỘ SƯU TẬP & BỘ LỌC KHOẢNG GIÁ CHỌN NHANH
+  window.openCollectionDetail = function (collectionName) {
+    state.collectionsFilter.activeCollection = collectionName;
+    state.collectionsFilter.priceFilter = 'all';
+    state.collectionsFilter.sizeFilter = 'all';
+    state.collectionsFilter.stockFilter = 'all';
+    state.collectionsFilter.sort = 'default';
+
+    const colObj = state.collections.find(c => c.collection === collectionName);
+    const colProducts = state.products.filter(p => p.collection === collectionName);
+
+    const titleEl = document.getElementById('col-detail-title');
+    const fileEl = document.getElementById('col-detail-file');
+    const countEl = document.getElementById('col-detail-count');
+    const sortSelect = document.getElementById('col-sort-select');
+
+    if (titleEl) titleEl.textContent = collectionName;
+    if (fileEl) fileEl.textContent = colObj ? colObj.file_name : 'Bộ Sưu Tập CTP';
+    if (countEl) countEl.textContent = `${colProducts.length} sản phẩm`;
+    if (sortSelect) sortSelect.value = 'default';
+
+    // Reset active chips UI
+    document.querySelectorAll('#col-price-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colprice') === 'all');
+    });
+    document.querySelectorAll('#col-size-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colsize') === 'all');
+    });
+    document.querySelectorAll('#col-stock-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colstock') === 'all');
+    });
+
+    // Chuyển view
+    const listView = document.getElementById('col-list-view');
+    const detailView = document.getElementById('col-detail-view');
+    if (listView) listView.style.display = 'none';
+    if (detailView) detailView.style.display = 'block';
+
+    if (state.activeTab !== 'collections') {
+      switchTab('collections');
+    }
+
+    applyColProductFilters();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.backToCollectionsList = function () {
+    state.collectionsFilter.activeCollection = null;
+    const listView = document.getElementById('col-list-view');
+    const detailView = document.getElementById('col-detail-view');
+    if (detailView) detailView.style.display = 'none';
+    if (listView) listView.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.resetColFilters = function () {
+    state.collectionsFilter.priceFilter = 'all';
+    state.collectionsFilter.sizeFilter = 'all';
+    state.collectionsFilter.stockFilter = 'all';
+    state.collectionsFilter.sort = 'default';
+
+    const sortSelect = document.getElementById('col-sort-select');
+    if (sortSelect) sortSelect.value = 'default';
+
+    document.querySelectorAll('#col-price-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colprice') === 'all');
+    });
+    document.querySelectorAll('#col-size-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colsize') === 'all');
+    });
+    document.querySelectorAll('#col-stock-chips .sale-chip-btn').forEach(b => {
+      b.classList.toggle('active', b.getAttribute('data-colstock') === 'all');
+    });
+
+    applyColProductFilters();
+  };
+
+  function applyColProductFilters() {
+    const colName = state.collectionsFilter.activeCollection;
+    if (!colName) return;
+
+    let list = state.products.filter(p => p.collection === colName);
+
+    // 1. Lọc khoảng giá nhanh
+    const pf = state.collectionsFilter.priceFilter;
+    if (pf === 'under_2m') {
+      list = list.filter(p => (p.price || 0) > 0 && (p.price || 0) < 2000000);
+    } else if (pf === '2m_5m') {
+      list = list.filter(p => (p.price || 0) >= 2000000 && (p.price || 0) <= 5000000);
+    } else if (pf === '5m_10m') {
+      list = list.filter(p => (p.price || 0) > 5000000 && (p.price || 0) <= 10000000);
+    } else if (pf === '10m_20m') {
+      list = list.filter(p => (p.price || 0) > 10000000 && (p.price || 0) <= 20000000);
+    } else if (pf === 'above_20m') {
+      list = list.filter(p => (p.price || 0) > 20000000);
+    }
+
+    // 2. Lọc Kích cỡ
+    const sf = state.collectionsFilter.sizeFilter;
+    if (sf && sf !== 'all') {
+      list = list.filter(p => p.sizes && p.sizes[sf] > 0);
+    }
+
+    // 3. Lọc Tồn kho
+    const stockF = state.collectionsFilter.stockFilter;
+    if (stockF === 'in_stock') {
+      list = list.filter(p => (p.stock || 0) > 0);
+    }
+
+    // 4. Sắp xếp
+    const sort = state.collectionsFilter.sort;
+    if (sort === 'price-asc') {
+      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sort === 'price-desc') {
+      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sort === 'stock-desc') {
+      list.sort((a, b) => (b.stock || 0) - (a.stock || 0));
+    } else if (sort === 'name-asc') {
+      list.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+    }
+
+    // 5. Render vào giao diện
+    const grid = document.getElementById('col-products-grid');
+    const emptyState = document.getElementById('col-empty-state');
+    const countText = document.getElementById('col-products-count-text');
+
+    if (countText) {
+      countText.textContent = `Đang hiển thị ${list.length} sản phẩm`;
+    }
+
+    if (list.length === 0) {
+      if (grid) grid.innerHTML = '';
+      if (emptyState) emptyState.style.display = 'block';
+    } else {
+      if (emptyState) emptyState.style.display = 'none';
+      if (grid) {
+        grid.innerHTML = list.map(p => renderProductCard(p)).join('');
+      }
+    }
   }
 
   // ===================================================
@@ -960,7 +1244,7 @@
   // ===================================================
   window.togglePicklist = function (id, event) {
     if (event) event.stopPropagation();
-    const prod = state.products.find(p => p.id === id);
+    const prod = state.products.find(p => p.id === id) || (state.sale2010 && state.sale2010.products.find(p => p.id === id));
     if (!prod) return;
 
     const idx = state.picklist.findIndex(p => p.id === id);
@@ -988,6 +1272,21 @@
       badge.textContent = count;
       badge.style.display = count > 0 ? 'flex' : 'none';
     });
+
+    // Update Floating Selection Bar (Bridal Archive lookbook style)
+    const floatBar = document.getElementById('floating-bar');
+    const floatCount = document.getElementById('floating-bar-count');
+    const floatVal = document.getElementById('floating-bar-val');
+    if (floatBar) {
+      if (count > 0) {
+        floatBar.hidden = false;
+        if (floatCount) floatCount.textContent = `${count} THIẾT KẾ ĐÃ CHỌN`;
+        const totalVal = state.picklist.reduce((sum, p) => sum + (p.price || 0) * (p.stock || 1), 0);
+        if (floatVal) floatVal.textContent = formatVnd(totalVal);
+      } else {
+        floatBar.hidden = true;
+      }
+    }
   }
 
   function updateCardFavStates(id) {
@@ -1090,7 +1389,7 @@
   // PRODUCT DETAIL MODAL (BOTTOM SHEET)
   // ===================================================
   window.openProductModal = function (id) {
-    const p = state.products.find(x => x.id === id);
+    const p = state.products.find(x => x.id === id) || (state.sale2010 && state.sale2010.products.find(x => x.id === id));
     if (!p) return;
 
     const modal = document.getElementById('product-modal');
@@ -1098,82 +1397,106 @@
     if (!modal || !body) return;
 
     const isPicked = state.picklist.some(x => x.id === p.id);
+    const isSale = p.sale_price !== undefined;
 
     let sizesGridHtml = '';
     const standardSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL'];
     const pSizes = p.sizes || {};
-    sizesGridHtml = standardSizes.map(sz => {
-      const qty = pSizes[sz] || 0;
-      return `
-        <div class="size-cell ${qty > 0 ? 'active-stock' : ''}">
-          <div class="size-name-text">${sz}</div>
-          <div class="size-qty-text">${qty > 0 ? qty : '-'}</div>
+    const allSizeKeys = Object.keys(pSizes);
+    const hasOnlyFreesize = allSizeKeys.length === 1 && allSizeKeys[0].toLowerCase().includes('free');
+
+    if (hasOnlyFreesize) {
+      sizesGridHtml = `
+        <div class="size-cell active-stock" style="grid-column:span 2;">
+          <div class="size-name-text">FREESIZE</div>
+          <div class="size-qty-text">${pSizes[allSizeKeys[0]] || 1} cái</div>
         </div>
       `;
-    }).join('');
+    } else {
+      sizesGridHtml = standardSizes.map(sz => {
+        const qty = pSizes[sz] || 0;
+        return `
+          <div class="size-cell ${qty > 0 ? 'active-stock' : ''}">
+            <div class="size-name-text">${sz}</div>
+            <div class="size-qty-text">${qty > 0 ? qty : '-'}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    const priceDisplay = isSale
+      ? `
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          ${p.original_price > 0 ? `<span style="font-size:14px;color:var(--muted);text-decoration:line-through;">${p.original_price_formatted}</span>` : ''}
+          <div class="modal-price-highlight" style="color:var(--sale);">${p.sale_price_formatted || formatVnd(p.sale_price)}</div>
+          ${p.discount_percent > 0 ? `<span class="prod-discount-badge" style="position:static;">-${p.discount_percent}%</span>` : ''}
+        </div>
+      `
+      : `
+        <div class="modal-price-highlight">${p.price_formatted}</div>
+        ${p.rent_price > 0 ? `<div style="font-size:12.5px;color:var(--muted);">Thuê: <strong>${p.rent_price_formatted}</strong></div>` : ''}
+      `;
 
     body.innerHTML = `
       ${p.image
         ? `<div class="modal-prod-img-wrap" onclick="openLightbox('${p.image}', '${p.name.replace(/'/g, "\\'")}')">
             <img class="modal-prod-img" src="${p.image}" alt="${p.name}">
-            <div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:#fff;padding:4px 8px;border-radius:6px;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
+            <div style="position:absolute;bottom:12px;right:12px;background:rgba(20,18,18,0.75);color:#fff;padding:6px 10px;font-size:0.7rem;letter-spacing:.14em;text-transform:uppercase;display:flex;align-items:center;gap:6px;backdrop-filter:blur(6px);">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-              Bấm để phóng to
+              Phóng to
             </div>
           </div>`
-        : ''
+        : `<div class="modal-prod-img-wrap" style="display:flex;align-items:center;justify-content:center;color:var(--text-muted);letter-spacing:.18em;text-transform:uppercase;font-size:12px;">Chưa có ảnh</div>`
       }
 
-      <div class="modal-prod-badges">
-        <span class="prod-stock-badge ${p.stock > 0 ? 'in-stock' : 'out-stock'}" style="position:static;">
-          ${p.stock > 0 ? `Còn hàng (Tồn: ${p.stock})` : 'Tạm hết hàng'}
-        </span>
-        <span class="section-badge">${p.category}</span>
-      </div>
-
-      <h3 class="modal-prod-title">${p.name}</h3>
-
-      <div class="modal-sku-row">
-        <div>
-          <span style="font-size:0.7rem;color:var(--text-muted);display:block;">MÃ HÀNG / SKU:</span>
-          <span class="sku-code-text" id="modal-sku-text">${p.code}</span>
+      <div class="modal-prod-details">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;">
+          <span class="modal-look-no">${p.code || 'LOOK ATELIER'}</span>
+          <span class="prod-stock-badge ${p.stock > 0 ? 'in-stock' : 'out-stock'}" style="position:static;">
+            ${p.stock > 0 ? `Tồn kho: ${p.stock}` : 'Tạm hết hàng'}
+          </span>
         </div>
-        <button class="btn-copy-sku" onclick="copySku('${p.code}')">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-          Sao chép mã
-        </button>
+
+        <h3 class="modal-prod-title">${p.name}</h3>
+        ${p.can_custom_order ? `<div style="margin-bottom:8px;"><span class="prod-tag-custom-order" style="font-size:11px;padding:4px 10px;">✨ Đặt may mới vẫn hưởng giá sale</span></div>` : ''}
+
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:14px;">
+          ${priceDisplay}
+        </div>
+
+        <dl class="modal-specs-dl">
+          <dt>${isSale ? 'Nhóm / BST' : 'Bộ sưu tập'}</dt>
+          <dd>${p.group_name || p.collection}</dd>
+
+          <dt>Phân loại</dt>
+          <dd>${p.category || 'Thời trang cao cấp'}</dd>
+
+          ${p.location ? `<dt>Vị trí thùng</dt><dd style="color:var(--gold);font-weight:600;">📦 ${p.location}</dd>` : (p.file_name ? `<dt>Kho nguồn</dt><dd>${p.file_name}</dd>` : '')}
+
+          ${p.barcode ? `<dt>Mã Barcode</dt><dd style="font-variant-numeric:tabular-nums;">${p.barcode}</dd>` : ''}
+          ${p.note ? `<dt>Ghi chú</dt><dd style="color:var(--gold);">${p.note}</dd>` : ''}
+          ${p.total_value > 0 ? `<dt>Định giá tồn</dt><dd>${p.total_value_formatted}</dd>` : ''}
+        </dl>
+
+        <div style="border-top:1px solid var(--line);padding-top:14px;">
+          <div style="font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;">Kích cỡ &amp; Tồn kho</div>
+          <div class="size-matrix-grid">
+            ${sizesGridHtml}
+          </div>
+        </div>
+
+        <div class="modal-actions" style="flex-wrap:wrap; gap:8px;">
+          <button class="btn-modal-pick ${isPicked ? 'active' : ''}" onclick="togglePicklist('${p.id}'); openProductModal('${p.id}');">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="${isPicked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            ${isPicked ? 'ĐÃ CHỌN (BẤM ĐỂ HỦY)' : 'CHỌN MẪU NÀY (PICK)'}
+          </button>
+          ${isSale ? `<button class="btn-modal-secondary btn-copy-zalo" onclick="copyZaloLead('${p.id}', event)">📋 Tư vấn Zalo</button>` : ''}
+          <button class="btn-modal-secondary" onclick="copySku('${p.code}')" style="display:inline-flex;align-items:center;gap:6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Mã SKU
+          </button>
+        </div>
       </div>
-
-      <div class="modal-price-box">
-        <div style="font-size:0.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">Giá Niêm Yết:</div>
-        <div class="modal-price-main">${p.price_formatted}</div>
-        ${p.rent_price > 0 ? `<div class="modal-rent-price">🏷️ Giá áp dụng thuê: <strong>${p.rent_price_formatted}</strong></div>` : ''}
-      </div>
-
-      <div class="modal-section-heading">Chi Tiết Tồn Kho Theo Size</div>
-      <div class="size-matrix-grid">
-        ${sizesGridHtml}
-      </div>
-
-      <div class="modal-section-heading">Thông Tin Kho & Lưu Trữ</div>
-      <table class="info-list-table">
-        <tr>
-          <td>Bộ Sưu Tập</td>
-          <td>${p.collection}</td>
-        </tr>
-        <tr>
-          <td>File Kho Nguồn</td>
-          <td>${p.file_name}</td>
-        </tr>
-        ${p.barcode ? `<tr><td>Mã Barcode</td><td style="font-family:monospace;">${p.barcode}</td></tr>` : ''}
-        ${p.note ? `<tr><td>Vị Trí / Ghi Chú</td><td style="color:var(--gold-primary);">${p.note}</td></tr>` : ''}
-        ${p.total_value > 0 ? `<tr><td>Tổng Giá Trị Tồn</td><td>${p.total_value_formatted}</td></tr>` : ''}
-      </table>
-
-      <button class="btn-modal-add-pick" onclick="togglePicklist('${p.id}'); openProductModal('${p.id}');">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="${isPicked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        ${isPicked ? 'Đã có trong danh sách chọn (Bấm để hủy)' : 'Thêm vào danh sách chọn đồ / Soạn kho'}
-      </button>
     `;
 
     modal.classList.add('open');
@@ -1997,6 +2320,280 @@
     if (!amount || amount <= 0) return '0 ₫';
     return `${amount.toLocaleString('vi-VN')} ₫`;
   }
+
+  // ===================================================
+  // VIEW: KICK-OFF SALE 20/10 LOGIC
+  // ===================================================
+  function initSale2010() {
+    if (!state.sale2010 || !state.sale2010.products || state.sale2010.products.length === 0) return;
+
+    // Populate Location Dropdown
+    const locSelect = document.getElementById('sale-location-select');
+    if (locSelect) {
+      const locations = new Set();
+      state.sale2010.products.forEach(p => {
+        if (p.location && p.location.trim()) locations.add(p.location.trim());
+      });
+      const sortedLocs = Array.from(locations).sort();
+      locSelect.innerHTML = '<option value="all">Tất cả vị trí thùng</option>' +
+        sortedLocs.map(loc => `<option value="${loc}">${loc}</option>`).join('');
+    }
+
+    // Update Hero Metrics Banner
+    const totalCount = state.sale2010.products.length;
+    const mayCount = state.sale2010.products.filter(p => p.can_custom_order).length;
+    const totalStock = state.sale2010.products.reduce((sum, p) => sum + (p.stock || 1), 0);
+    const minPrice = Math.min(...state.sale2010.products.filter(p => p.sale_price > 0).map(p => p.sale_price));
+
+    const totalEl = document.getElementById('sale-metric-total');
+    const mayEl = document.getElementById('sale-metric-may');
+    const stockEl = document.getElementById('sale-metric-stock');
+    const priceEl = document.getElementById('sale-metric-price');
+
+    if (totalEl) totalEl.textContent = totalCount.toLocaleString('vi-VN');
+    if (mayEl) mayEl.textContent = mayCount.toLocaleString('vi-VN');
+    if (stockEl) stockEl.textContent = totalStock.toLocaleString('vi-VN');
+    if (priceEl && isFinite(minPrice)) priceEl.textContent = `Từ ${Math.round(minPrice / 1000)}K`;
+
+    applySaleFilters();
+  }
+
+  function applySaleFilters() {
+    if (!state.sale2010 || !state.sale2010.products) return;
+
+    const { query, groupFilter, priceFilter, locationFilter, sizeFilter, sort } = state.sale2010;
+    const qLower = (query || '').toLowerCase().trim();
+
+    let list = state.sale2010.products.filter(p => {
+      // Query filter
+      if (qLower) {
+        const matchCode = (p.code || '').toLowerCase().includes(qLower);
+        const matchName = (p.name || '').toLowerCase().includes(qLower);
+        const matchLoc = (p.location || '').toLowerCase().includes(qLower);
+        const matchNote = (p.note || '').toLowerCase().includes(qLower);
+        const matchCol = (p.collection || '').toLowerCase().includes(qLower);
+        const matchGrp = (p.group_name || '').toLowerCase().includes(qLower);
+        if (!matchCode && !matchName && !matchLoc && !matchNote && !matchCol && !matchGrp) {
+          return false;
+        }
+      }
+
+      // Group tab filter
+      if (groupFilter === 'thung_dg' && p.group !== 'thung_dg') return false;
+      if (groupFilter === 'cac_bst' && p.group !== 'cac_bst') return false;
+      if (groupFilter === 'prefall_2026' && p.group !== 'prefall_2026') return false;
+      if (groupFilter === 'holiday_2025' && p.group !== 'holiday_2025') return false;
+      if (groupFilter === 'dat_may' && !p.can_custom_order) return false;
+
+      // Price filter
+      if (priceFilter === '860k' && p.sale_price !== 860000) return false;
+      if (priceFilter === '2680k' && p.sale_price !== 2680000) return false;
+      if (priceFilter === '4680k' && p.sale_price !== 4680000) return false;
+      if (priceFilter === 'under_3m' && (p.sale_price <= 0 || p.sale_price >= 3000000)) return false;
+      if (priceFilter === '3m_10m' && (p.sale_price < 3000000 || p.sale_price > 10000000)) return false;
+      if (priceFilter === 'above_10m' && p.sale_price <= 10000000) return false;
+
+      // Location filter
+      if (locationFilter !== 'all' && p.location !== locationFilter) return false;
+
+      // Size filter
+      if (sizeFilter !== 'all') {
+        const pSizes = p.sizes || {};
+        if (!pSizes[sizeFilter] || pSizes[sizeFilter] <= 0) return false;
+      }
+
+      return true;
+    });
+
+    // Sorting
+    if (sort === 'price-asc') {
+      list.sort((a, b) => (a.sale_price || 0) - (b.sale_price || 0));
+    } else if (sort === 'price-desc') {
+      list.sort((a, b) => (b.sale_price || 0) - (a.sale_price || 0));
+    } else if (sort === 'discount-desc') {
+      list.sort((a, b) => (b.discount_percent || 0) - (a.discount_percent || 0));
+    } else if (sort === 'stock-desc') {
+      list.sort((a, b) => (b.stock || 0) - (a.stock || 0));
+    } else if (sort === 'name-asc') {
+      list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'vi'));
+    }
+
+    state.sale2010.filteredProducts = list;
+    state.sale2010.page = 1;
+    renderSaleResults(true);
+  }
+
+  function renderSaleResults(reset = true) {
+    const grid = document.getElementById('sale-products-grid');
+    const empty = document.getElementById('sale-empty-state');
+    const countEl = document.getElementById('sale-result-count');
+    const pagin = document.getElementById('sale-pagination');
+    if (!grid) return;
+
+    const list = state.sale2010.filteredProducts;
+    const totalCount = list.length;
+    const totalAll = state.sale2010.products.length;
+
+    if (countEl) {
+      countEl.textContent = `Đang hiển thị ${Math.min(state.sale2010.page * state.sale2010.pageSize, totalCount)} / ${totalCount} sản phẩm Sale (Tổng kho Sale: ${totalAll})`;
+    }
+
+    if (totalCount === 0) {
+      grid.innerHTML = '';
+      if (empty) empty.style.display = 'flex';
+      if (pagin) pagin.style.display = 'none';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+
+    const visibleCount = state.sale2010.page * state.sale2010.pageSize;
+    const visible = list.slice(0, visibleCount);
+
+    grid.innerHTML = visible.map(renderSaleProductCard).join('');
+
+    if (pagin) {
+      pagin.style.display = visibleCount < totalCount ? 'flex' : 'none';
+    }
+  }
+
+  function renderSaleProductCard(p) {
+    const isPicked = state.picklist.some(x => x.id === p.id);
+    const inStock = (p.stock || 0) > 0;
+
+    let sizesHtml = '';
+    if (p.sizes && Object.keys(p.sizes).length > 0) {
+      sizesHtml = '<div class="prod-sizes-row">' +
+        Object.entries(p.sizes).slice(0, 4).map(([sz, qty]) => `
+          <span class="size-tag ${qty > 0 ? 'has-qty' : ''}">${sz}${qty > 1 ? `:${qty}` : ''}</span>
+        `).join('') +
+        '</div>';
+    }
+
+    return `
+      <div class="prod-card" onclick="openProductModal('${p.id}')">
+        <div class="prod-img-wrap">
+          ${p.image
+            ? `<img class="prod-img" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'150\\'><rect fill=\\'%23eee\\' width=\\'100\\' height=\\'150\\'/></svg>'">`
+            : `<div class="prod-img-placeholder">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <span>Chưa có ảnh</span>
+              </div>`
+          }
+          <span class="prod-stock-badge ${inStock ? 'in-stock' : 'out-stock'}">
+            ${inStock ? `Tồn: ${p.stock}` : 'Hết hàng'}
+          </span>
+          ${p.discount_percent > 0 ? `<span class="prod-discount-badge">-${p.discount_percent}%</span>` : ''}
+          <button class="prod-fav-btn ${isPicked ? 'active' : ''}" onclick="togglePicklist('${p.id}', event)" title="Chọn mẫu này">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="${isPicked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </button>
+        </div>
+        <div class="prod-body">
+          <div>
+            <div class="prod-meta-top">
+              <span class="prod-sku">${p.code}</span>
+              <span class="prod-col-tag">${p.group_name || p.collection}</span>
+            </div>
+            <h4 class="prod-name" title="${p.name}">${p.name}</h4>
+            ${p.can_custom_order ? `<span class="prod-tag-custom-order">✨ May Mới Được Giá Sale</span>` : ''}
+          </div>
+          <div>
+            ${p.location ? `<div class="prod-tag-location" style="margin-bottom:6px;">📦 ${p.location}</div>` : ''}
+            <div class="prod-price-box">
+              ${p.original_price > 0 ? `<div class="prod-orig-price">${p.original_price_formatted}</div>` : ''}
+              <div class="prod-price sale-price" style="color:var(--sale);">${p.sale_price_formatted || formatVnd(p.sale_price)}</div>
+            </div>
+            ${sizesHtml}
+            <div style="margin-top:10px; display:flex; gap:6px;">
+              <button class="btn-copy-zalo" onclick="copyZaloLead('${p.id}', event)" title="Sao chép thông tin báo giá Zalo">
+                📋 Zalo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.copyZaloLead = function (id, event) {
+    if (event) event.stopPropagation();
+    const p = (state.sale2010 && state.sale2010.products.find(x => x.id === id)) || state.products.find(x => x.id === id);
+    if (!p) return;
+
+    const sizesStr = Object.entries(p.sizes || {})
+      .filter(([_, q]) => q > 0)
+      .map(([s, q]) => `${s}:${q}`)
+      .join(', ') || 'Freesize';
+
+    let text = `✨ CHUNG THANH PHONG - PRIVATE SALE 20/10 ✨\n`;
+    text += `👗 Mẫu: ${p.name}\n`;
+    text += `🏷️ Mã: ${p.code}\n`;
+    text += `💰 Giá ưu đãi: ${p.sale_price_formatted || formatVnd(p.sale_price || p.price)}\n`;
+    if (p.original_price > 0) {
+      text += `💵 Giá gốc: ${p.original_price_formatted} (Giảm ${p.discount_percent}%)\n`;
+    }
+    text += `📏 Size sẵn kho: ${sizesStr} (Tồn: ${p.stock || 1})\n`;
+    if (p.location) {
+      text += `📦 Vị trí kho/thùng: ${p.location}\n`;
+    }
+    if (p.can_custom_order) {
+      text += `✨ ĐẶC BIỆT: Nhận đặt may mới size riêng VẪN ÁP DỤNG GIÁ SALE!\n`;
+    }
+    if (p.note) {
+      text += `📝 Ghi chú: ${p.note}\n`;
+    }
+    text += `\nQuý khách ưng ý mẫu này báo em chốt giữ đồ ngay nhé ạ! ❤️`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`Đã sao chép tin nhắn tư vấn Zalo cho mẫu ${p.code}!`);
+    }).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast(`Đã sao chép tin nhắn Zalo: ${p.code}!`);
+    });
+  };
+
+  window.resetSaleFilters = function () {
+    state.sale2010.query = '';
+    state.sale2010.groupFilter = 'all';
+    state.sale2010.priceFilter = 'all';
+    state.sale2010.locationFilter = 'all';
+    state.sale2010.sizeFilter = 'all';
+    state.sale2010.sort = 'default';
+    state.sale2010.page = 1;
+
+    const searchInput = document.getElementById('sale-search-input');
+    const clearBtn = document.getElementById('btn-clear-sale-search');
+    const locSelect = document.getElementById('sale-location-select');
+    const sortSelect = document.getElementById('sale-sort-select');
+
+    if (searchInput) searchInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    if (locSelect) locSelect.value = 'all';
+    if (sortSelect) sortSelect.value = 'default';
+
+    document.querySelectorAll('#sale-group-tabs .sale-grp-btn').forEach((b, idx) => {
+      if (idx === 0) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    document.querySelectorAll('#sale-price-chips .sale-chip-btn').forEach((b, idx) => {
+      if (idx === 0) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    document.querySelectorAll('#sale-size-chips .sale-chip-btn').forEach((b, idx) => {
+      if (idx === 0) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+
+    applySaleFilters();
+    showToast('Đã đặt lại bộ lọc Sale 20/10');
+  };
 
 })();
 

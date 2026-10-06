@@ -8,18 +8,23 @@
   <title>Tra Cứu & Quản Lý Kho Sản Phẩm | Chung Thanh Phong</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <!-- TOP APP BAR -->
   <header class="top-bar">
     <div class="top-bar-inner">
-      <div class="brand-section">
+      <div class="brand-section" onclick="switchTab('sale2010')" style="cursor: pointer;">
         <div class="brand-badge">CHUNG THANH PHONG</div>
-        <h1 class="brand-title">HỆ THỐNG KHO & TRA CỨU</h1>
+        <h1 class="brand-title"><span class="brand-script">Bridal</span> <span class="brand-caps">Archive &amp; Kho Hàng</span></h1>
       </div>
       <div class="top-bar-actions">
+        <button id="btn-top-sale2010" class="top-sale-chip" onclick="switchTab('sale2010')" title="Khám phá Private Sale 20/10">
+          <span class="sale-badge-icon">🏷️</span>
+          <span class="sale-chip-text">SALE 20/10</span>
+          <span class="sale-chip-dot"></span>
+        </button>
         <button id="btn-theme-toggle" class="icon-btn" title="Đổi giao diện Sáng / Tối" aria-label="Đổi giao diện">
           <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
           <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
@@ -41,140 +46,242 @@
   <!-- MAIN VIEWPORT CONTAINER -->
   <main class="app-main">
     
-    <!-- VIEW 1: DASHBOARD / TỔNG QUAN -->
-    <section id="view-dashboard" class="app-view active">
+    <!-- VIEW: KICK-OFF SALES 20/10 (TAB MẶC ĐỊNH) -->
+    <section id="view-sale2010" class="app-view active">
       <div class="view-header">
         <div class="view-title-wrap">
-          <span class="view-subtitle">Executive Overview</span>
-          <h2 class="view-title">Tổng Quan 3 Kho Hàng</h2>
+          <span class="view-subtitle">Private Atelier Campaign</span>
+          <h2 class="view-title">Kick-Off Sales 20/10</h2>
         </div>
-        <div class="date-badge" id="current-date">Hôm nay</div>
-      </div>
-
-      <!-- SEARCH INPUT HERO -->
-      <div class="dashboard-search-card">
-        <div class="search-input-mock" onclick="switchTab('search')">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <span>Nhập mã sản phẩm, barcode, tên đầm...</span>
-        </div>
-        <div class="dash-search-actions">
-          <button id="btn-dash-visual-search" class="dash-camera-btn" title="Tìm kiếm bằng hình ảnh (Shopee Lens)">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-            <span>Tìm bằng ảnh</span>
-          </button>
-          <button class="search-action-btn" onclick="switchTab('search')">Tra cứu</button>
+        <div class="sale-badge-pill" id="sale-campaign-badge">
+          <span>622 Thiết Kế Sale</span>
         </div>
       </div>
 
-      <!-- KEY METRICS STATS -->
-      <div class="stats-grid">
-        <div class="stat-card gold-gradient">
-          <div class="stat-icon-wrap">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Tổng Sản Phẩm</span>
-            <span class="stat-val" id="kpi-total-products">1,170</span>
-            <span class="stat-sub" id="kpi-in-stock">1.010 mã có sẵn</span>
-          </div>
+      <!-- SALES HERO METRICS -->
+      <div class="sale-metrics-banner">
+        <div class="sale-metric-item">
+          <span class="sale-metric-k">Tổng Sản Phẩm Sale</span>
+          <span class="sale-metric-v" id="sale-metric-total">622</span>
+          <span class="sale-metric-sub">5 Nhóm Danh Mục</span>
         </div>
-
-        <div class="stat-card rose-gradient">
-          <div class="stat-icon-wrap">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Tổng Giá Trị Kho</span>
-            <span class="stat-val" id="kpi-total-val">~32.9 Tỷ</span>
-            <span class="stat-sub">Định giá niêm yết</span>
-          </div>
+        <div class="sale-metric-item highlight-gold">
+          <span class="sale-metric-k">May Mới Hưởng Giá Sale</span>
+          <span class="sale-metric-v" id="sale-metric-may">95</span>
+          <span class="sale-metric-sub">Đặc quyền chốt đơn mới</span>
         </div>
-
-        <div class="stat-card dark-card">
-          <div class="stat-icon-wrap">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Bộ Sưu Tập / Sheet</span>
-            <span class="stat-val" id="kpi-collections">39</span>
-            <span class="stat-sub">Trên 3 File Kho</span>
-          </div>
+        <div class="sale-metric-item">
+          <span class="sale-metric-k">Tổng Tồn Kho Sẵn Có</span>
+          <span class="sale-metric-v" id="sale-metric-stock">887</span>
+          <span class="sale-metric-sub">Sản phẩm thực tế</span>
         </div>
-
-        <div class="stat-card dark-card">
-          <div class="stat-icon-wrap">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-          </div>
-          <div class="stat-info">
-            <span class="stat-label">Tổng Số Lượng Tồn</span>
-            <span class="stat-val" id="kpi-total-stock">1,594</span>
-            <span class="stat-sub">Sản phẩm thực tế</span>
-          </div>
+        <div class="sale-metric-item highlight-sale">
+          <span class="sale-metric-k">Mức Giá Ưu Đãi</span>
+          <span class="sale-metric-v" id="sale-metric-price">Từ 860K</span>
+          <span class="sale-metric-sub">Đồng giá hấp dẫn</span>
         </div>
       </div>
 
-      <!-- WAREHOUSE SUMMARY (3 FILES) -->
-      <div class="section-title-wrap">
-        <h3 class="section-title">Phân Bổ Theo 3 File Kho</h3>
-        <span class="section-badge">3 Nguồn Dữ Liệu</span>
+      <!-- SALES STAFF TOOLBAR & FILTERS -->
+      <div class="sale-filter-toolbar">
+        <!-- Search bar -->
+        <div class="sale-search-row">
+          <div class="sale-search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" id="sale-search-input" class="search-input" placeholder="Nhập mã DG, RTW, HOL, tên, hoặc vị trí thùng (VD: 6868, 399, 1280)..." autocomplete="off">
+            <button id="btn-clear-sale-search" class="clear-icon" style="display: none;">&times;</button>
+          </div>
+          <div class="sale-sort-wrap">
+            <select id="sale-sort-select" class="sort-select">
+              <option value="default">Sắp xếp: Mặc định</option>
+              <option value="price-asc">Giá sale: Tăng dần</option>
+              <option value="price-desc">Giá sale: Giảm dần</option>
+              <option value="discount-desc">% Giảm sâu nhất</option>
+              <option value="stock-desc">Tồn nhiều nhất</option>
+              <option value="name-asc">Tên A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Group Filter Tabs -->
+        <div class="sale-groups-tabs" id="sale-group-tabs">
+          <button class="sale-grp-btn active" data-group="all">Tất cả Sale (622)</button>
+          <button class="sale-grp-btn" data-group="thung_dg">Hàng Đồng Giá (296)</button>
+          <button class="sale-grp-btn" data-group="cac_bst">Sale Các BST (208)</button>
+          <button class="sale-grp-btn gold-accent" data-group="dat_may">✨ Đặt May Mới Giá Sale (95)</button>
+          <button class="sale-grp-btn" data-group="prefall_2026">PreFall 2026 (48)</button>
+          <button class="sale-grp-btn" data-group="holiday_2025">Holiday 2025 (22)</button>
+        </div>
+
+        <!-- Quick Subfilters for Sales Staff -->
+        <div class="sale-subfilter-row">
+          <div class="sale-filter-group-inline">
+            <span class="filter-k-tag">Mức giá:</span>
+            <div class="sale-chip-scroll" id="sale-price-chips">
+              <button class="sale-chip-btn active" data-price="all">Tất cả</button>
+              <button class="sale-chip-btn" data-price="860k">Đồng giá 860K</button>
+              <button class="sale-chip-btn" data-price="2680k">Đồng giá 2.68M</button>
+              <button class="sale-chip-btn" data-price="4680k">Đồng giá 4.68M</button>
+              <button class="sale-chip-btn" data-price="under_3m">Dưới 3 Triệu</button>
+              <button class="sale-chip-btn" data-price="3m_10m">3M - 10 Triệu</button>
+              <button class="sale-chip-btn" data-price="above_10m">Trên 10 Triệu</button>
+            </div>
+          </div>
+
+          <!-- Location / Box Dropdown -->
+          <div class="sale-filter-group-inline">
+            <span class="filter-k-tag">Vị trí thùng:</span>
+            <select id="sale-location-select" class="sale-select-compact">
+              <option value="all">Tất cả vị trí thùng</option>
+              <!-- Dynamic locations -->
+            </select>
+          </div>
+
+          <!-- Quick Size Filter -->
+          <div class="sale-filter-group-inline">
+            <span class="filter-k-tag">Size:</span>
+            <div class="sale-chip-scroll" id="sale-size-chips">
+              <button class="sale-chip-btn active" data-size="all">All</button>
+              <button class="sale-chip-btn" data-size="S">S</button>
+              <button class="sale-chip-btn" data-size="M">M</button>
+              <button class="sale-chip-btn" data-size="L">L</button>
+              <button class="sale-chip-btn" data-size="XL">XL</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta status bar -->
+        <div class="sale-meta-count-bar">
+          <span id="sale-result-count">Đang hiển thị 622 sản phẩm Sale</span>
+          <button class="btn-text-gold" onclick="resetSaleFilters()">Đặt lại bộ lọc</button>
+        </div>
       </div>
-      <div class="warehouse-grid" id="warehouse-cards-container">
+
+      <!-- PRODUCTS GRID -->
+      <div class="product-cards-grid" id="sale-products-grid">
         <!-- Rendered dynamically -->
       </div>
 
-      <!-- EXCEL OVERVIEW TABLES SHORTCUT -->
-      <div class="section-title-wrap">
-        <h3 class="section-title">Bảng Tổng Hợp Excel Gốc</h3>
-        <span class="section-badge">Sheet Báo Cáo</span>
-      </div>
-      <div class="overview-chips-scroll" id="overview-sheets-container">
-        <!-- Rendered dynamically -->
-      </div>
-
-      <!-- POPULAR COLLECTIONS PREVIEW -->
-      <div class="section-title-wrap">
-        <h3 class="section-title">Bộ Sưu Tập Tiêu Biểu</h3>
-        <button class="view-all-link" onclick="switchTab('collections')">Xem tất cả (39) &rarr;</button>
-      </div>
-      <div class="collection-scroll-cards" id="featured-collections-container">
-        <!-- Rendered dynamically -->
+      <!-- EMPTY STATE -->
+      <div id="sale-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">🏷️</div>
+        <h3>Không tìm thấy sản phẩm Sale phù hợp</h3>
+        <p>Thử tìm với từ khóa khác hoặc xóa bộ lọc mức giá / vị trí thùng.</p>
+        <button class="btn-primary" onclick="resetSaleFilters()">Xóa bộ lọc Sale</button>
       </div>
 
-      <!-- RECENTLY VIEWED / FEATURED PRODUCTS -->
-      <div class="section-title-wrap">
-        <h3 class="section-title">Sản Phẩm Mới & Nổi Bật</h3>
-        <button class="view-all-link" onclick="switchTab('inventory')">Xem kho hàng &rarr;</button>
-      </div>
-      <div class="product-cards-grid" id="dashboard-featured-products">
-        <!-- Rendered dynamically -->
+      <!-- PAGINATION -->
+      <div class="pagination-wrapper" id="sale-pagination" style="display: none;">
+        <button id="btn-sale-load-more" class="btn-load-more">Tải thêm sản phẩm Sale</button>
       </div>
     </section>
 
     <!-- VIEW 2: COLLECTIONS / BỘ SƯU TẬP -->
     <section id="view-collections" class="app-view">
-      <div class="view-header">
-        <div class="view-title-wrap">
-          <span class="view-subtitle">Danh mục & Sheets</span>
-          <h2 class="view-title">Tất Cả Bộ Sưu Tập</h2>
+      <!-- SUB-VIEW 1: DANH SÁCH BỘ SƯU TẬP -->
+      <div id="col-list-view">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <span class="view-subtitle">Danh mục & Sheets</span>
+            <h2 class="view-title">Tất Cả Bộ Sưu Tập</h2>
+          </div>
+        </div>
+
+        <!-- FILTER TABS FOR FILES -->
+        <div class="filter-pill-bar" id="collections-file-filter">
+          <button class="filter-pill active" data-file="all">Tất cả (39)</button>
+          <button class="filter-pill" data-file="kho_bridal">Kho Bridal 2026</button>
+          <button class="filter-pill" data-file="kho_rin">Kho Trưng Bày Rin</button>
+          <button class="filter-pill" data-file="kho_moi">Kho Mới 30.06.25</button>
+        </div>
+
+        <!-- CATEGORY CHIPS -->
+        <div class="category-chip-scroll" id="collections-cat-filter">
+          <!-- Dynamic chips -->
+        </div>
+
+        <!-- COLLECTIONS GRID -->
+        <div class="collections-masonry" id="collections-grid">
+          <!-- Rendered dynamically -->
         </div>
       </div>
 
-      <!-- FILTER TABS FOR FILES -->
-      <div class="filter-pill-bar" id="collections-file-filter">
-        <button class="filter-pill active" data-file="all">Tất cả (39)</button>
-        <button class="filter-pill" data-file="kho_bridal">Kho Bridal 2026</button>
-        <button class="filter-pill" data-file="kho_rin">Kho Trưng Bày Rin</button>
-        <button class="filter-pill" data-file="kho_moi">Kho Mới 30.06.25</button>
-      </div>
+      <!-- SUB-VIEW 2: CHI TIẾT BỘ SƯU TẬP (KÈM BỘ LỌC KHOẢNG GIÁ CHỌN NHANH) -->
+      <div id="col-detail-view" style="display: none;">
+        <div class="col-detail-header-card">
+          <button class="col-back-btn" onclick="backToCollectionsList()" title="Quay lại danh sách bộ sưu tập">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            <span>Tất cả BST</span>
+          </button>
+          <div class="col-detail-title-wrap">
+            <span class="col-detail-sub" id="col-detail-file">Kho Bridal 2026</span>
+            <h2 class="col-detail-title" id="col-detail-title">SPRING 2025</h2>
+          </div>
+          <div class="col-detail-badge" id="col-detail-count">20 sản phẩm</div>
+        </div>
 
-      <!-- CATEGORY CHIPS -->
-      <div class="category-chip-scroll" id="collections-cat-filter">
-        <!-- Dynamic chips -->
-      </div>
+        <!-- BỘ LỌC KHOẢNG GIÁ ĐỂ CHỌN NHANH -->
+        <div class="col-filter-toolbar">
+          <div class="col-filter-row">
+            <span class="filter-k-tag">Khoảng giá:</span>
+            <div class="sale-chip-scroll" id="col-price-chips">
+              <button class="sale-chip-btn active" data-colprice="all">Tất cả mức giá</button>
+              <button class="sale-chip-btn" data-colprice="under_2m">Dưới 2 Triệu</button>
+              <button class="sale-chip-btn" data-colprice="2m_5m">2M - 5 Triệu</button>
+              <button class="sale-chip-btn" data-colprice="5m_10m">5M - 10 Triệu</button>
+              <button class="sale-chip-btn" data-colprice="10m_20m">10M - 20 Triệu</button>
+              <button class="sale-chip-btn" data-colprice="above_20m">Trên 20 Triệu</button>
+            </div>
+          </div>
 
-      <!-- COLLECTIONS GRID -->
-      <div class="collections-masonry" id="collections-grid">
-        <!-- Rendered dynamically -->
+          <div class="col-filter-row-sub">
+            <div class="col-filter-group-inline">
+              <span class="filter-k-tag">Kích cỡ:</span>
+              <div class="sale-chip-scroll" id="col-size-chips">
+                <button class="sale-chip-btn active" data-colsize="all">All</button>
+                <button class="sale-chip-btn" data-colsize="XS">XS</button>
+                <button class="sale-chip-btn" data-colsize="S">S</button>
+                <button class="sale-chip-btn" data-colsize="M">M</button>
+                <button class="sale-chip-btn" data-colsize="L">L</button>
+                <button class="sale-chip-btn" data-colsize="XL">XL</button>
+              </div>
+            </div>
+            <div class="col-filter-group-inline">
+              <span class="filter-k-tag">Tồn kho:</span>
+              <div class="sale-chip-scroll" id="col-stock-chips">
+                <button class="sale-chip-btn active" data-colstock="all">Tất cả</button>
+                <button class="sale-chip-btn" data-colstock="in_stock">Còn hàng</button>
+              </div>
+            </div>
+            <div class="col-sort-wrap">
+              <select id="col-sort-select" class="sale-select-compact">
+                <option value="default">Sắp xếp: Mặc định</option>
+                <option value="price-asc">Giá: Tăng dần</option>
+                <option value="price-desc">Giá: Giảm dần</option>
+                <option value="stock-desc">Tồn kho nhiều</option>
+                <option value="name-asc">Tên A-Z</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-meta-bar">
+            <span id="col-products-count-text">Đang hiển thị 20 sản phẩm</span>
+            <button class="btn-text-gold" onclick="resetColFilters()">Đặt lại lọc giá</button>
+          </div>
+        </div>
+
+        <!-- PRODUCTS GRID FOR COLLECTION -->
+        <div class="product-cards-grid" id="col-products-grid">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div id="col-empty-state" class="empty-state" style="display: none;">
+          <div class="empty-icon">👗</div>
+          <h3>Không có sản phẩm nào trong khoảng giá này</h3>
+          <p>Thử chọn khoảng giá khác để xem các thiết kế khác trong bộ sưu tập.</p>
+          <button class="btn-primary" onclick="resetColFilters()">Xem tất cả mức giá</button>
+        </div>
       </div>
     </section>
 
@@ -349,13 +456,28 @@
 
   </main>
 
+  <!-- FLOATING SELECTION BAR (BRIDAL ARCHIVE LOOKBOOK STYLE) -->
+  <aside class="floating-selection-bar" id="floating-bar" hidden aria-label="Thanh lựa chọn sản phẩm">
+    <div class="floating-bar-inner">
+      <div class="floating-bar-left">
+        <span class="floating-bar-badge" id="floating-bar-count">0 THIẾT KẾ ĐÃ CHỌN</span>
+        <span class="floating-bar-val" id="floating-bar-val">0 ₫</span>
+      </div>
+      <button class="floating-bar-btn" onclick="switchTab('picklist')">
+        <span>Xem danh sách soạn đồ</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </aside>
+
   <!-- BOTTOM NAVIGATION BAR (FIXED FOR MOBILE) -->
   <nav class="bottom-nav">
-    <button class="nav-item active" data-target="dashboard">
-      <div class="nav-icon">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <button class="nav-item nav-item-sale active" data-target="sale2010">
+      <div class="nav-icon has-badge">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        <span class="sale-nav-dot"></span>
       </div>
-      <span class="nav-label">Tổng Quan</span>
+      <span class="nav-label">Sale 20/10</span>
     </button>
     <button class="nav-item" data-target="collections">
       <div class="nav-icon">
