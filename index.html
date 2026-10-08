@@ -25,6 +25,10 @@
           <span class="sale-chip-text">SALE 20/10</span>
           <span class="sale-chip-dot"></span>
         </button>
+        <button id="btn-top-bstgannhat" class="top-sale-chip top-archive-chip" onclick="switchTab('bstgannhat')" title="Khám phá Bộ Sưu Tập Gần Nhất (92 Thiết Kế)">
+          <span class="sale-badge-icon">✨</span>
+          <span class="sale-chip-text">BST GẦN NHẤT</span>
+        </button>
         <button id="btn-top-bridalweb" class="top-sale-chip top-archive-chip" onclick="switchTab('bridalweb')" title="Xem Bridal Archive Sale Website">
           <span class="sale-badge-icon">🌐</span>
           <span class="sale-chip-text">BRIDAL WEB</span>
@@ -177,6 +181,111 @@
       <!-- PAGINATION -->
       <div class="pagination-wrapper" id="sale-pagination" style="display: none;">
         <button id="btn-sale-load-more" class="btn-load-more">Tải thêm sản phẩm Sale</button>
+      </div>
+    </section>
+
+    <!-- VIEW: BỘ SƯU TẬP GẦN NHẤT (92 THIẾT KẾ TRÍCH XUẤT TỪ D:\hinh CTP) -->
+    <section id="view-bstgannhat" class="app-view">
+      <div class="view-header">
+        <div class="view-title-wrap">
+          <span class="view-subtitle">Chung Thanh Phong Atelier Lookbook</span>
+          <h2 class="view-title">Bộ Sưu Tập Gần Nhất</h2>
+        </div>
+        <div class="sale-badge-pill" id="bst-campaign-badge">
+          <span>✨ 92 Thiết Kế Mới Nhất</span>
+        </div>
+      </div>
+
+      <!-- METRICS BANNER -->
+      <div class="sale-metrics-banner">
+        <div class="sale-metric-item">
+          <span class="sale-metric-k">Tổng Thiết Kế Trích Xuất</span>
+          <span class="sale-metric-v" id="bst-metric-total">92</span>
+          <span class="sale-metric-sub">Thư mục D:\hinh CTP</span>
+        </div>
+        <div class="sale-metric-item highlight-gold">
+          <span class="sale-metric-k">PreFall 2026 (Mới Nhất)</span>
+          <span class="sale-metric-v" id="bst-metric-pf26">24</span>
+          <span class="sale-metric-sub">LME-0526 Lookbook</span>
+        </div>
+        <div class="sale-metric-item">
+          <span class="sale-metric-k">Holiday &amp; PreFall 2025</span>
+          <span class="sale-metric-v" id="bst-metric-holiday">47</span>
+          <span class="sale-metric-sub">LME-1225 &amp; LME-0425</span>
+        </div>
+        <div class="sale-metric-item highlight-sale">
+          <span class="sale-metric-k">Ready To Wear (RTW)</span>
+          <span class="sale-metric-v" id="bst-metric-rtw">21</span>
+          <span class="sale-metric-sub">Look 02 - Look 75</span>
+        </div>
+      </div>
+
+      <!-- FILTER TOOLBAR -->
+      <div class="sale-filter-toolbar">
+        <!-- Search bar -->
+        <div class="sale-search-row">
+          <div class="sale-search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="search" id="bst-search-input" class="search-input" placeholder="Nhập mã SP (LME-0526, LME-1225...), Look, Tên đồ, hoặc chất liệu ren/nhung/tweed..." autocomplete="off">
+            <button id="btn-clear-bst-search" class="clear-icon" style="display: none;">&times;</button>
+          </div>
+          <div class="sale-sort-wrap">
+            <select id="bst-sort-select" class="sort-select">
+              <option value="default">Sắp xếp: Thứ tự Look</option>
+              <option value="price-asc">Đơn giá: Tăng dần</option>
+              <option value="price-desc">Đơn giá: Giảm dần</option>
+              <option value="code-asc">Mã sản phẩm A-Z</option>
+              <option value="name-asc">Tên trang phục A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Collection Category Tabs -->
+        <div class="sale-groups-tabs" id="bst-group-tabs">
+          <button class="sale-grp-btn active" data-bst="all">Tất cả BST (92)</button>
+          <button class="sale-grp-btn gold-accent" data-bst="PREFALL 2026">PreFall 2026 (24)</button>
+          <button class="sale-grp-btn" data-bst="HOLIDAY 2025">Holiday 2025 (25)</button>
+          <button class="sale-grp-btn" data-bst="PREFALL 2025">PreFall 2025 (22)</button>
+          <button class="sale-grp-btn" data-bst="READY TO WEAR">Ready To Wear (21)</button>
+        </div>
+
+        <!-- Price Range Filter Chips -->
+        <div class="sale-subfilter-row">
+          <div class="sale-filter-group-inline">
+            <span class="filter-k-tag">Mức giá:</span>
+            <div class="sale-chip-scroll" id="bst-price-chips">
+              <button class="sale-chip-btn active" data-price="all">Tất cả giá</button>
+              <button class="sale-chip-btn" data-price="under_10m">Dưới 10 Triệu</button>
+              <button class="sale-chip-btn" data-price="10m_25m">10M - 25 Triệu</button>
+              <button class="sale-chip-btn" data-price="25m_40m">25M - 40 Triệu</button>
+              <button class="sale-chip-btn" data-price="above_40m">Trên 40 Triệu</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta status bar -->
+        <div class="sale-meta-count-bar">
+          <span id="bst-result-count">Đang hiển thị 92 thiết kế BST gần nhất</span>
+          <button class="btn-text-gold" onclick="resetBstFilters()">Đặt lại bộ lọc</button>
+        </div>
+      </div>
+
+      <!-- PRODUCTS GRID -->
+      <div class="product-cards-grid sale-products-grid" id="bst-products-grid">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div id="bst-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">👗</div>
+        <h3>Không tìm thấy thiết kế phù hợp</h3>
+        <p>Thử tìm với từ khóa khác hoặc xóa bộ lọc mức giá / bộ sưu tập.</p>
+        <button class="btn-primary" onclick="resetBstFilters()">Xóa bộ lọc</button>
+      </div>
+
+      <!-- PAGINATION -->
+      <div class="pagination-wrapper" id="bst-pagination" style="display: none;">
+        <button id="btn-bst-load-more" class="btn-load-more">Tải thêm thiết kế</button>
       </div>
     </section>
 
@@ -518,6 +627,12 @@
         <span class="sale-nav-dot"></span>
       </div>
       <span class="nav-label">Sale 20/10</span>
+    </button>
+    <button class="nav-item" data-target="bstgannhat">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <span class="nav-label">BST Mới</span>
     </button>
     <button class="nav-item" data-target="collections">
       <div class="nav-icon">
@@ -864,8 +979,8 @@
   <div id="toast" class="toast">Đã sao chép vào bộ nhớ tạm!</div>
 
   <!-- LOAD DATA SCRIPT & APPLICATION SCRIPT -->
-  <script src="data/bundle_data.js"></script>
+  <script src="data/bundle_data.js?v=hd"></script>
   <script src="data/visual_index.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=hd"></script>
 </body>
 </html>

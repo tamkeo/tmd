@@ -18,6 +18,13 @@ class Handler(SimpleHTTPRequestHandler):
         except Exception:
             pass
 
+    def translate_path(self, path):
+        clean_path = path.split('?')[0].split('#')[0]
+        if clean_path.startswith('/hinh_ctp/'):
+            filename = clean_path[len('/hinh_ctp/'):]
+            return os.path.join(r"D:\hinh CTP", filename)
+        return super().translate_path(path)
+
 server = ThreadingHTTPServer(('0.0.0.0', 8089), Handler)
 print("Threading server listening on port 8089", flush=True)
 server.serve_forever()

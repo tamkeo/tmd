@@ -56,6 +56,16 @@
       page: 1,
       pageSize: 24
     },
+    bstgannhat: {
+      products: [],
+      filteredProducts: [],
+      query: '',
+      bstFilter: 'all',
+      priceFilter: 'all',
+      sort: 'default',
+      page: 1,
+      pageSize: 24
+    },
     visualSearch: {
       workerUrl: localStorage.getItem('CTP_WORKER_URL') || '',
       currentEngine: localStorage.getItem('CTP_WORKER_URL') ? 'worker' : 'client',
@@ -160,12 +170,25 @@
       }
     }
 
+    // Load BST Gần Nhất data (92 thiết kế trích xuất từ D:\hinh CTP)
+    if (window.BST_GAN_NHAT_DATA) {
+      state.bstgannhat.products = window.BST_GAN_NHAT_DATA;
+    } else {
+      try {
+        const bstRes = await fetch('data/bst_gan_nhat.json');
+        state.bstgannhat.products = await bstRes.json();
+      } catch (err) {
+        console.warn('Could not load bst_gan_nhat.json:', err);
+      }
+    }
+
     updatePicklistBadges();
   }
 
   // RENDER ALL VIEWS
   function renderAllViews() {
     initSale2010();
+    initBstGanNhat();
     renderCollections();
     initSearchFilters();
     applySearchFilters();
@@ -495,6 +518,69 @@
       btnSaleLoadMore.addEventListener('click', () => {
         state.sale2010.page++;
         renderSaleResults(false);
+      });
+    }
+
+    // ==========================================
+    // BST GẦN NHẤT EVENT LISTENERS
+    // ==========================================
+    const bstSearchInput = document.getElementById('bst-search-input');
+    const clearBstSearchBtn = document.getElementById('btn-clear-bst-search');
+    if (bstSearchInput) {
+      bstSearchInput.addEventListener('input', (e) => {
+        state.bstgannhat.query = e.target.value.trim();
+        if (clearBstSearchBtn) clearBstSearchBtn.style.display = state.bstgannhat.query ? 'block' : 'none';
+        state.bstgannhat.page = 1;
+        applyBstGanNhatFilters();
+      });
+    }
+    if (clearBstSearchBtn) {
+      clearBstSearchBtn.addEventListener('click', () => {
+        if (bstSearchInput) bstSearchInput.value = '';
+        state.bstgannhat.query = '';
+        clearBstSearchBtn.style.display = 'none';
+        state.bstgannhat.page = 1;
+        applyBstGanNhatFilters();
+      });
+    }
+
+    // BST Group tabs
+    document.querySelectorAll('#bst-group-tabs .sale-grp-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#bst-group-tabs .sale-grp-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.bstgannhat.bstFilter = btn.getAttribute('data-bst');
+        state.bstgannhat.page = 1;
+        applyBstGanNhatFilters();
+      });
+    });
+
+    // BST Price chips
+    document.querySelectorAll('#bst-price-chips .sale-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#bst-price-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        state.bstgannhat.priceFilter = btn.getAttribute('data-price');
+        state.bstgannhat.page = 1;
+        applyBstGanNhatFilters();
+      });
+    });
+
+    // BST Sort select
+    const bstSortSelect = document.getElementById('bst-sort-select');
+    if (bstSortSelect) {
+      bstSortSelect.addEventListener('change', (e) => {
+        state.bstgannhat.sort = e.target.value;
+        applyBstGanNhatFilters();
+      });
+    }
+
+    // BST Load more
+    const btnBstLoadMore = document.getElementById('btn-bst-load-more');
+    if (btnBstLoadMore) {
+      btnBstLoadMore.addEventListener('click', () => {
+        state.bstgannhat.page++;
+        renderBstGanNhatResults(false);
       });
     }
 
@@ -1389,7 +1475,9 @@
   // PRODUCT DETAIL MODAL (BOTTOM SHEET)
   // ===================================================
   window.openProductModal = function (id) {
-    const p = state.products.find(x => x.id === id) || (state.sale2010 && state.sale2010.products.find(x => x.id === id));
+    const p = state.products.find(x => x.id === id) || 
+              (state.sale2010 && state.sale2010.products.find(x => x.id === id)) ||
+              (state.bstgannhat && state.bstgannhat.products.find(x => x.id === id));
     if (!p) return;
 
     const modal = document.getElementById('product-modal');
@@ -2618,6 +2706,172 @@
         loader.style.display = 'none';
       }, 300);
     }
+  };
+
+  // ==========================================
+  // VIEW: BST GẦN NHẤT LOGIC (92 THIẾT KẾ MỚI TỪ D:\hinh CTP)
+  // ==========================================
+  function initBstGanNhat() {
+    if (!state.bstgannhat || !state.bstgannhat.products || state.bstgannhat.products.length === 0) return;
+
+    // Update Hero Metrics Banner
+    const prods = state.bstgannhat.products;
+    const totalEl = document.getElementById('bst-metric-total');
+    const pf26El = document.getElementById('bst-metric-pf26');
+    const holEl = document.getElementById('bst-metric-holiday');
+    const rtwEl = document.getElementById('bst-metric-rtw');
+
+    if (totalEl) totalEl.textContent = prods.length;
+    if (pf26El) pf26El.textContent = prods.filter(p => p.bst === 'PREFALL 2026').length;
+    if (holEl) holEl.textContent = prods.filter(p => p.bst === 'HOLIDAY 2025' || p.bst === 'PREFALL 2025').length;
+    if (rtwEl) rtwEl.textContent = prods.filter(p => p.bst === 'READY TO WEAR').length;
+
+    applyBstGanNhatFilters();
+  }
+
+  function applyBstGanNhatFilters() {
+    if (!state.bstgannhat || !state.bstgannhat.products) return;
+
+    const { query, bstFilter, priceFilter, sort } = state.bstgannhat;
+    const qLower = (query || '').toLowerCase().trim();
+
+    let list = state.bstgannhat.products.filter(p => {
+      // Query filter
+      if (qLower) {
+        const matchCode = (p.code || '').toLowerCase().includes(qLower);
+        const matchLook = (p.look || '').toLowerCase().includes(qLower);
+        const matchName = (p.name || '').toLowerCase().includes(qLower);
+        const matchDesc = (p.description || '').toLowerCase().includes(qLower);
+        const matchBst = (p.bst || '').toLowerCase().includes(qLower);
+        if (!matchCode && !matchLook && !matchName && !matchDesc && !matchBst) return false;
+      }
+
+      // BST filter
+      if (bstFilter !== 'all' && p.bst !== bstFilter) return false;
+
+      // Price filter
+      if (priceFilter === 'under_10m' && (p.price <= 0 || p.price >= 10000000)) return false;
+      if (priceFilter === '10m_25m' && (p.price < 10000000 || p.price > 25000000)) return false;
+      if (priceFilter === '25m_40m' && (p.price < 25000000 || p.price > 40000000)) return false;
+      if (priceFilter === 'above_40m' && p.price <= 40000000) return false;
+
+      return true;
+    });
+
+    // Sorting
+    if (sort === 'price-asc') {
+      list.sort((a, b) => (a.price || 0) - (b.price || 0));
+    } else if (sort === 'price-desc') {
+      list.sort((a, b) => (b.price || 0) - (a.price || 0));
+    } else if (sort === 'code-asc') {
+      list.sort((a, b) => (a.code || '').localeCompare(b.code || '', 'vi'));
+    } else if (sort === 'name-asc') {
+      list.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'vi'));
+    } else {
+      // default: STT
+      list.sort((a, b) => (a.stt || 0) - (b.stt || 0));
+    }
+
+    state.bstgannhat.filteredProducts = list;
+    state.bstgannhat.page = 1;
+    renderBstGanNhatResults(true);
+  }
+
+  function renderBstGanNhatResults(reset = true) {
+    const grid = document.getElementById('bst-products-grid');
+    const empty = document.getElementById('bst-empty-state');
+    const countEl = document.getElementById('bst-result-count');
+    const pagin = document.getElementById('bst-pagination');
+    if (!grid) return;
+
+    const list = state.bstgannhat.filteredProducts;
+    const totalCount = list.length;
+    const totalAll = state.bstgannhat.products.length;
+
+    if (countEl) {
+      countEl.textContent = `Đang hiển thị ${Math.min(state.bstgannhat.page * state.bstgannhat.pageSize, totalCount)} / ${totalCount} thiết kế (Tổng kho BST gần nhất: ${totalAll})`;
+    }
+
+    if (totalCount === 0) {
+      grid.innerHTML = '';
+      if (empty) empty.style.display = 'flex';
+      if (pagin) pagin.style.display = 'none';
+      return;
+    }
+
+    if (empty) empty.style.display = 'none';
+
+    const visibleCount = state.bstgannhat.page * state.bstgannhat.pageSize;
+    const visible = list.slice(0, visibleCount);
+
+    grid.innerHTML = visible.map(renderBstProductCard).join('');
+
+    if (pagin) {
+      pagin.style.display = visibleCount < totalCount ? 'flex' : 'none';
+    }
+  }
+
+  function renderBstProductCard(p) {
+    const isPicked = state.picklist.some(x => x.id === p.id);
+
+    return `
+      <div class="prod-card" onclick="openProductModal('${p.id}')">
+        <div class="prod-img-wrap">
+          <img class="prod-img" src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'150\\'><rect fill=\\'%23eee\\' width=\\'100\\' height=\\'150\\'/></svg>'">
+          <div class="prod-badges">
+            <span class="badge-cat">${p.bst}</span>
+            ${p.look ? `<span class="badge-stock in-stock" style="background: rgba(197,168,128,0.9); color:#000; font-weight:700;">${p.look}</span>` : ''}
+          </div>
+          <button class="btn-card-pick ${isPicked ? 'picked' : ''}" 
+                  onclick="event.stopPropagation(); togglePicklist('${p.id}')" 
+                  title="${isPicked ? 'Bỏ chọn' : 'Thêm vào danh sách chọn đồ'}">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </button>
+        </div>
+        <div class="prod-info">
+          <div class="prod-code-row">
+            <span class="prod-code">${p.code || p.look || 'ATELIER'}</span>
+            <span class="prod-file-tag" title="File gốc: ${p.filename}">${p.look || '#' + p.stt}</span>
+          </div>
+          <h4 class="prod-name" title="${p.name}">${p.name}</h4>
+          <div class="prod-price-row">
+            <div class="price-stack">
+              <span class="sale-price-tag" style="color:var(--gold-primary, #c5a880);">${p.price_formatted}</span>
+              ${p.sub_details ? `<span class="orig-price-strike" style="font-size:0.68rem; color:#888; text-decoration:none;">${p.sub_details}</span>` : ''}
+            </div>
+            ${p.can_custom_order ? `<span class="sale-discount-tag" style="background:#5c4820; color:#ecd9a8;">PRE-ORDER</span>` : ''}
+          </div>
+          ${p.description ? `<p class="prod-desc-snippet" style="font-size:0.72rem; color:#777; margin-top:4px; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${p.description}</p>` : ''}
+        </div>
+      </div>
+    `;
+  }
+
+  window.resetBstFilters = function() {
+    const input = document.getElementById('bst-search-input');
+    const clearBtn = document.getElementById('btn-clear-bst-search');
+    if (input) input.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
+    document.querySelectorAll('#bst-group-tabs .sale-grp-btn').forEach(b => b.classList.remove('active'));
+    const allTab = document.querySelector('#bst-group-tabs .sale-grp-btn[data-bst="all"]');
+    if (allTab) allTab.classList.add('active');
+
+    document.querySelectorAll('#bst-price-chips .sale-chip-btn').forEach(b => b.classList.remove('active'));
+    const allPrice = document.querySelector('#bst-price-chips .sale-chip-btn[data-price="all"]');
+    if (allPrice) allPrice.classList.add('active');
+
+    const sortSelect = document.getElementById('bst-sort-select');
+    if (sortSelect) sortSelect.value = 'default';
+
+    state.bstgannhat.query = '';
+    state.bstgannhat.bstFilter = 'all';
+    state.bstgannhat.priceFilter = 'all';
+    state.bstgannhat.sort = 'default';
+    state.bstgannhat.page = 1;
+    applyBstGanNhatFilters();
   };
 
 })();
